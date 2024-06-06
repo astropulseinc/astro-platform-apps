@@ -1,0 +1,24 @@
+name: confluent-for-kubernetes
+profileName: pre-selected-cluster
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://packages.confluent.io/helm
+      chartVersion: 0.921.20
+      chartName: confluent-for-kubernetes
+    values:
+     type: object
+     object:
+       namespaced: false
+       tolerations:
+        - key: "node.cluster.platform.astropulse.io/purchase-option"
+          operator: "Equal"
+          value: "ondemand"
+          effect: "NoSchedule" 
+        - key: "node.cluster.platform.astropulse.io/type"
+          operator: "Equal"
+          value: "dataplane"
+          effect: "NoSchedule"
+externalAccess:
+  accessType: None

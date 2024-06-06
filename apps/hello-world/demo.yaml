@@ -1,0 +1,8 @@
+name: hello-world
+profileName: profile-proximity
+source:
+ type: image
+ image:
+   registry: docker.io
+   repository: astropulse/latency
+   tag: v1.0.0

@@ -1,0 +1,12 @@
+name: kafka-cluster
+profileName: pre-selected-cluster
+source:
+  type: yaml
+  yaml: 
+    repo: 
+      path: apps/confluent-for-kubernetes
+      repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+      targetRevision: main
+    exclude: "*.md"
+externalAccess:
+  accessType: None

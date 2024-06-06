@@ -1,0 +1,55 @@
+name: cert-manager
+profileName: pre-selected-cluster
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://charts.jetstack.io
+      chartVersion: v1.14.5
+      chartName: cert-manager
+    values:
+     type: object
+     object:
+       installCRDs: true
+       tolerations:
+         - key: "node.cluster.platform.astropulse.io/purchase-option"
+           operator: "Equal"
+           value: "ondemand"
+           effect: "NoSchedule" 
+         - key: "node.cluster.platform.astropulse.io/type"
+           operator: "Equal"
+           value: "dataplane"
+           effect: "NoSchedule"
+       cainjector:
+         tolerations:
+         - key: "node.cluster.platform.astropulse.io/purchase-option"
+           operator: "Equal"
+           value: "ondemand"
+           effect: "NoSchedule" 
+         - key: "node.cluster.platform.astropulse.io/type"
+           operator: "Equal"
+           value: "dataplane"
+           effect: "NoSchedule"
+       webhook:
+         tolerations:
+         - key: "node.cluster.platform.astropulse.io/purchase-option"
+           operator: "Equal"
+           value: "ondemand"
+           effect: "NoSchedule" 
+         - key: "node.cluster.platform.astropulse.io/type"
+           operator: "Equal"
+           value: "dataplane"
+           effect: "NoSchedule"
+       startupapicheck:
+          tolerations:
+          - key: "node.cluster.platform.astropulse.io/purchase-option"
+            operator: "Equal"
+            value: "ondemand"
+            effect: "NoSchedule" 
+          - key: "node.cluster.platform.astropulse.io/type"
+            operator: "Equal"
+            value: "dataplane"
+            effect: "NoSchedule"
+externalAccess:
+  accessType: None
+
