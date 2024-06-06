@@ -3,6 +3,8 @@ profileName: pre-selected-cluster
 source:
   type: yaml
   yaml: 
+    # The targetNamespace is the namespace where the resources will be deployed
+    targetNamespace: confluent
     repo: 
       path: resources/cfk
       repoURL: https://github.com/astropulseinc/astro-platform-apps.git
