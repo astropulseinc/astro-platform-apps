@@ -11,6 +11,16 @@ spec:
   dataVolumeCapacity: 100Gi
   metricReporter:
     enabled: false
+  podTemplate:
+    tolerations:
+      - key: "node.cluster.platform.astropulse.io/purchase-option"
+        operator: "Equal"
+        value: "ondemand"
+        effect: "NoSchedule"
+      - key: "node.cluster.platform.astropulse.io/type"
+        operator: "Equal"
+        value: "dataplane"
+        effect: "NoSchedule"
   dependencies:
     zookeeper:
       endpoint: zookeeper.confluent.svc.cluster.local:2181
