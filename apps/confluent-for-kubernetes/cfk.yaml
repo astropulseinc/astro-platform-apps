@@ -1,5 +1,5 @@
 name: kafka-cluster
-profileName: pre-selected-cluster
+profileName: pre-selected-aws-cluster
 source:
   type: yaml
   yaml: 

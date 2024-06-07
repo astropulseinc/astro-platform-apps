@@ -1,5 +1,5 @@
 name: hello-world
-profileName: profile-proximity
+profileName: pre-selected-aws-cluster
 source:
  type: image
  image:

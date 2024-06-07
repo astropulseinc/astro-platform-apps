@@ -19,4 +19,4 @@ spec:
         value: "dataplane"
         effect: "NoSchedule"
   dataVolumeCapacity: 10Gi
-  logVolumeCapacity: 10Gi
+  logVolumeCapacity: 10GiID 
