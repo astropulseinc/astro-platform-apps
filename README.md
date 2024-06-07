@@ -1,95 +1,144 @@
-# Create Organization (needs admin role)
-`astroctl org create test-org`
 
-# Get the Organization Id (needs the admin role)
-`astroctl org list`
+# Astro Platform Application Deployment Guide
 
-# Generate API Key to interact with Astro Platform
-`astroctl auth login --org-id <org_id>`
+## Download astroctl CLI
+TBD
 
-# Check if there are any cluster
-`astroctl provider clusters list -p aws` (aws)
-`astroctl provider clusters list -p gcp` (gcp)
+## Create Organization (Requires Admin Role)
+To create an organization:
+```
+astroctl org create test-org
+```
 
-# Ask the administrator to deploy the cluster
-If  there are no cluster, ask administrator to deploy the cluster (requires `platform-admin or admin` role)
+## Get the Organization ID (Requires Admin Role)
+To list the organization and get the ID:
+```
+astroctl org list
+```
 
-# Check if any cluster is available
-`astroctl provider clusters list -p aws`
-`astroctl provider clusters list -p gcp`
+## Generate API Key to Interact with Astro Platform
+To generate an API key:
+```
+astroctl auth login --org-id <org_id>
+```
 
-Wait till, there are any cluster availabile
+## Available Clusters
+To list available clusters for AWS:
+```
+astroctl provider clusters list -p aws
+```
+To list available clusters for GCP:
+```
+astroctl provider clusters list -p gcp
+```
 
-# Deploy Application Profiles
-Note: Make sure to update the app-profiles/selected-cluster.yaml to update the clusterName of your choice. To find the cluster names (for your organization) run 
-`astroctl provider clusters list -p aws` (for aws)
-`astroctl provider clusters list -p gcp` (for gcp)
-`astroctl app profile apply -f app-profiles/`
+### Note
+If there are no clusters available, ask the administrator to deploy a cluster (requires `platform-admin/admin` role).
 
-# Deploy Hello-world Application
-`astroctl app apply -f apps/hello-world/demo.yaml`
+## Check for Available Clusters
+To check if any cluster is available for AWS:
+```
+astroctl provider clusters list -p aws
+```
+To check if any cluster is available for GCP:
+```
+astroctl provider clusters list -p gcp
+```
+Wait until clusters are available.
 
-## status check
-`astroctl app status hello-world`
+## Deploy Application Profiles
+Note: Update the `app-profiles/selected-cluster.yaml` file to include the `clusterName` of your choice. To find the cluster names for your organization, run:
+```
+astroctl provider clusters list -p aws  # for AWS
+astroctl provider clusters list -p gcp  # for GCP
+```
+Then apply the application profile:
+```
+astroctl app profile apply -f app-profiles/
+```
 
-## events
-`astroctl app events hello-world -ojson` (ci/cd events)
-`astroctl app events hello-world -k ojson` (k8s events)
+## Deploy Hello-world Application
+To deploy the hello-world application:
+```
+astroctl app apply -f apps/hello-world/demo.yaml
+```
 
-## logs
-`astroctl app logs hello-world -ojson` 
+### Status Check
+To check the status of the hello-world application:
+```
+astroctl app status hello-world
+```
 
-## Access
-To find the http endpoint run the command 
-`astroctl app get hello-world | grep endpoint`
+### Events
+To view CI/CD events:
+```
+astroctl app events hello-world -ojson
+```
+To view Kubernetes events:
+```
+astroctl app events hello-world -k ojson
+```
 
-## Remote K8s Access
-- First find the clusterName
--  `astroctl app status  hello-world | grep clusterName`
+### Logs
+To view logs:
+```
+astroctl app logs hello-world -ojson
+```
 
-Once clusterName is retrieved, replace <clusterName> as required
+### Access
+To find the HTTP endpoint, run:
+```
+astroctl app get hello-world | grep endpoint
+```
 
-`astroctl provider clusters set-context <clusterName>`
+## Remote Kubernetes Access
+1. Find the `clusterName`:
+```
+astroctl app status hello-world | grep clusterName
+```
+2. Set the context with the retrieved `clusterName`:
+```
+astroctl provider clusters set-context <clusterName>
+```
+This will generate the kubeconfig and change the context. Now, you can run standard `kubectl` commands.
 
-Once you run the above command it will generate the kubeconfig and change the context.
-Now, you can run the standard `kubectl` command
+To delete the kubeconfig for your cluster:
+```
+astroctl provider clusters delete-context <clusterName>
+```
 
-For `kubeconfig` for your clsuter deletion run the command
-`astroctl provider clusters delete-context <clusterName>`
+## Deploying Services
+These examples provide popular cloud-native services that help manage the application lifecycle. Note that the platform does not create any external access configuration for applications when deploying through `helm` (helm repo), `repository` (helm from git code), or `yaml`.
 
+### Cert-Manager
+To deploy Cert-Manager:
+```
+astroctl app apply -f apps/cert-manager/cert-manager.yaml
+```
 
-# Deploying Services
+### Grafana
+To deploy Grafana:
+```
+astroctl app apply -f apps/grafana/grafana.yaml
+```
 
-These are some examples that provides popular cloud native services that helps to manage
-application lifecycle. For platform doesn't create any external access configuration for application
-when deploying through source type `helm (helm repo)` `repository (helm from git code)` or `yaml`
+### Prometheus
+To deploy Prometheus:
+```
+astroctl app apply -f apps/prometheus/prometheus.yaml
+```
+Use `astroctl app logs/events` and remote access to debug if needed.
 
-## Cert-Manager
-`astroctl app apply -f apps/cert-manager/cert-manager.yaml`
+### Deploy CFK Operator (for Confluent Data Streaming)
+To deploy the CFK Operator:
+```
+astroctl app apply -f apps/operators/cfk/cfk.yaml
+```
+Use `astroctl app logs/events` and remote access to debug if needed.
 
-## Grafana
-`astroctl app apply -f apps/grafana/grafana.yaml`
-
-## Prometheus
-`astroctl app apply -f apps/prometheus/prometheus.yaml`
-
-### Debug
-use the astroctl app logs/events and remote access to debug
-
-## Deploy CFK Operator (for Confluent Data Streaming)
-
-`astroctl app apply -f apps/operators/cfk/cfk.yaml`
-
-### Debug
-use the astroctl app logs/events and remote access to debug
-
-## Deploy Kafka Cluster (CFK)
-`astroctl app apply -f apps/confluent-kafka/cfk.yaml`
-
-`Note:` for this logs subcommand is not available from astroctl
-
-
-
-
-
-
+### Deploy Kafka Cluster (CFK)
+To deploy a Kafka Cluster:
+```
+astroctl app apply -f apps/confluent-kafka/cfk.yaml
+```
+Note: The logs subcommand is not available from `astroctl` for this deployment.
