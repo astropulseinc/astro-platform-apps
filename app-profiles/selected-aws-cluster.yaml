@@ -1,0 +1,3 @@
+profileName: pre-selected-aws-cluster
+clusterName: aws-us-west2.k8s.local
+availabilityTier: basic

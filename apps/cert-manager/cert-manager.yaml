@@ -1,5 +1,5 @@
 name: cert-manager
-profileName: pre-selected-cluster
+profileName: pre-selected-aws-cluster
 source:
   type: helm
   helm: 

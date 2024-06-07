@@ -1,12 +1,12 @@
-name: confluent-for-kubernetes
+name: grafana-service
 profileName: pre-selected-aws-cluster
 source:
   type: helm
   helm: 
     repo: 
-      repoURL: https://packages.confluent.io/helm
-      chartVersion: 0.921.20
-      chartName: confluent-for-kubernetes
+      repoURL: https://grafana.github.io/helm-charts
+      chartVersion: 8.0.0
+      chartName: grafana
     values:
      type: object
      object:

@@ -1,0 +1,3 @@
+profileName: pre-selected-gcp-cluster
+clusterName: gcp-us-west2.k8s.local
+availabilityTier: basic

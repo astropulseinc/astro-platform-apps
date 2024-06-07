@@ -1,13 +1,30 @@
+# Create Organization (needs admin role)
+`astroctl org create test-org`
+
+# Get the Organization Id (needs the admin role)
+`astroctl org list`
+
 # Generate API Key to interact with Astro Platform
-`astroctl auth login`
+`astroctl auth login --org-id <org_id>`
+
+# Check if there are any cluster
+`astroctl provider clusters list -p aws` (aws)
+`astroctl provider clusters list -p gcp` (gcp)
+
+# Ask the administrator to deploy the cluster
+If  there are no cluster, ask administrator to deploy the cluster (requires `platform-admin or admin` role)
+
+# Check if any cluster is available
+`astroctl provider clusters list -p aws`
+`astroctl provider clusters list -p gcp`
+
+Wait till, there are any cluster availabile
 
 # Deploy Application Profiles
-
 Note: Make sure to update the app-profiles/selected-cluster.yaml to update the clusterName of your choice. To find the cluster names (for your organization) run 
 `astroctl provider clusters list -p aws` (for aws)
 `astroctl provider clusters list -p gcp` (for gcp)
-
-astroctl app profile apply -f app-profiles/
+`astroctl app profile apply -f app-profiles/`
 
 # Deploy Hello-world Application
 `astroctl app apply -f apps/hello-world/demo.yaml`
@@ -50,6 +67,12 @@ when deploying through source type `helm (helm repo)` `repository (helm from git
 ## Cert-Manager
 `astroctl app apply -f apps/cert-manager/cert-manager.yaml`
 
+## Grafana
+`astroctl app apply -f apps/grafana/grafana.yaml`
+
+## Prometheus
+`astroctl app apply -f apps/prometheus/prometheus.yaml`
+
 ### Debug
 use the astroctl app logs/events and remote access to debug
 
@@ -59,6 +82,12 @@ use the astroctl app logs/events and remote access to debug
 
 ### Debug
 use the astroctl app logs/events and remote access to debug
+
+## Deploy Kafka Cluster (CFK)
+`astroctl app apply -f apps/confluent-for-kubernetes/cfk.yaml`
+
+`Note:` for this logs subcommand is not available from astroctl
+
 
 
 
