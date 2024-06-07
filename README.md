@@ -84,7 +84,7 @@ use the astroctl app logs/events and remote access to debug
 use the astroctl app logs/events and remote access to debug
 
 ## Deploy Kafka Cluster (CFK)
-`astroctl app apply -f apps/confluent-for-kubernetes/cfk.yaml`
+`astroctl app apply -f apps/confluent-kafka/cfk.yaml`
 
 `Note:` for this logs subcommand is not available from astroctl
 
