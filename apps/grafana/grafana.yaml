@@ -20,5 +20,3 @@ source:
           operator: "Equal"
           value: "dataplane"
           effect: "NoSchedule"
-externalAccess:
-  accessType: None
