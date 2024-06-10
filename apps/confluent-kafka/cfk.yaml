@@ -1,5 +1,6 @@
 name: kafka-cluster
 profileName: pre-selected-aws-cluster
+namespace: kafka
 source:
   type: yaml
   yaml: 
@@ -9,5 +10,4 @@ source:
       repoURL: https://github.com/astropulseinc/astro-platform-apps.git
       targetRevision: main
     exclude: "*.md"
-  namespace: kafka
 
