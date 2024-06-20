@@ -11,6 +11,12 @@ source:
      type: object
      object:
        namespaced: false
+       persistence:
+         type: pvc
+         enabled: true
+         size: 10Gi
+       adminUser: admin
+       adminPassword: 66YQ8CYImcatKjM3JDx5ykBYb9EQeQSZcKIhY6llq4
        tolerations:
         - key: "node.cluster.platform.astropulse.io/purchase-option"
           operator: "Equal"
