@@ -25,11 +25,11 @@ astroctl auth login --org-id <org_id>
 ## Available Clusters
 To list available clusters for AWS:
 ```
-astroctl provider clusters list -p aws
+astroctl clusters list -p aws
 ```
 To list available clusters for GCP:
 ```
-astroctl provider clusters list -p gcp
+astroctl clusters list -p gcp
 ```
 
 ### Note
@@ -38,19 +38,19 @@ If there are no clusters available, ask the administrator to deploy a cluster (r
 ## Check for Available Clusters
 To check if any cluster is available for AWS:
 ```
-astroctl provider clusters list -p aws
+astroctl clusters list -p aws
 ```
 To check if any cluster is available for GCP:
 ```
-astroctl provider clusters list -p gcp
+astroctl clusters list -p gcp
 ```
 Wait until clusters are available.
 
 ## Deploy Application Profiles
 Note: Update the `app-profiles/selected-cluster.yaml` file to include the `clusterName` of your choice. To find the cluster names for your organization, run:
 ```
-astroctl provider clusters list -p aws  # for AWS
-astroctl provider clusters list -p gcp  # for GCP
+astroctl clusters list -p aws  # for AWS
+astroctl clusters list -p gcp  # for GCP
 ```
 Then apply the application profile:
 ```
@@ -98,13 +98,13 @@ astroctl app status hello-world | grep clusterName
 ```
 2. Set the context with the retrieved `clusterName`:
 ```
-astroctl provider clusters set-context <clusterName>
+astroctl clusters set-context <clusterName>
 ```
 This will generate the kubeconfig and change the context. Now, you can run standard `kubectl` commands.
 
 To delete the kubeconfig for your cluster:
 ```
-astroctl provider clusters delete-context <clusterName>
+astroctl clusters delete-context <clusterName>
 ```
 
 ## Deploying Services
