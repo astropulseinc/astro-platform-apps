@@ -1,0 +1,24 @@
+clusterName: eks-byoa
+provider: aws
+# notification:
+#   type: slack
+#   slack:
+#     webhookURL: https://hooks.slack.com/services/xxxx
+region: us-east-1
+provisioner:
+  type: eks
+  eks:
+    accountId: <your account id>
+    credentials:
+      type: dynamic
+#approvalWorkflow: true
+clusterSpec:
+  dataPlane:
+    nodeGroups:
+    - name: omlet-stack-node-group
+      minNode: 1
+      maxNode: 3
+      machineTypes:
+      - t3.medium
+      labels:
+        hello: test

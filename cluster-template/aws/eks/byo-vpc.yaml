@@ -1,0 +1,42 @@
+clusterName: eks-byo-vpc
+provider: aws
+# notification:
+#   type: slack
+#   slack:
+#     webhookURL: https://hooks.slack.com/services/xxx  # update this
+region: us-west-2
+provisioner:
+  type: eks
+  eks:
+    accountId: <your account id>
+    vpcId: <your vpc id>
+    vpcCIDR: 192.168.0.0/16
+    subnets: 
+      us-west-2a: 
+        - type: public
+          id: subnet-0123456789abcdef3
+        - type: private
+          id: subnet-0123456789abcdef5
+      us-west-2b:
+        - type: public
+          id: subnet-0123456789abcdef6
+        - type: private
+          id: subnet-0123456789abcdef4
+      us-west-2c:
+        - type: public
+          id: subnet-0123456789abcdef2
+        - type: private
+          id: subnet-0123456789abcdef1
+    credentials:
+      type: dynamic
+#approvalWorkflow: true
+clusterSpec:
+  dataPlane:
+    nodeGroups:
+    - name: vpc-test-node-group
+      minNode: 1
+      maxNode: 3
+      machineTypes:
+      - t3.medium
+      labels:
+        hello: test
