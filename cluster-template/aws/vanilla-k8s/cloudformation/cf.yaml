@@ -1,0 +1,230 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for Astro Platform to deploy Kubernetes cluster using kops. Creates necessary IAM roles, policies, S3 bucket for kops state store, and other required AWS resources.
+
+Parameters:
+  ClusterName:
+    Type: String
+    Description: Unique name for the cluster
+    AllowedPattern: '[a-zA-Z0-9\-]+'
+    ConstraintDescription: Cluster name can include letters, numbers, and hyphens.
+Resources:
+  AstroPlaneGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${ClusterName}-astro-plane-group"
+      ManagedPolicyArns:
+        - !Ref AstroPlaneS3Policy
+        - !Ref AstroPlaneEC2Policy
+        - !Ref AstroPlaneEventBridgePolicy
+        - !Ref AstroPlaneRoute53Policy
+        - !Ref AstroPlaneSQSPolicy
+        - !Ref AstroPlaneVPCPolicy
+        - !Ref AstroPlaneIAMPolicy
+
+  AstroPlaneS3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-s3-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:*
+              - s3-object-lambda:*
+            Resource: "*"
+  AstroPlaneEC2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-ec2-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:*
+              - elasticloadbalancing:*
+              - cloudwatch:*
+              - autoscaling:*
+            Resource: "*"
+          - Effect: Allow
+            Action: iam:CreateServiceLinkedRole
+            Resource: "*"
+            Condition:
+              StringEquals:
+                iam:AWSServiceName:
+                  - autoscaling.amazonaws.com
+                  - ec2scheduled.amazonaws.com
+                  - elasticloadbalancing.amazonaws.com
+                  - spot.amazonaws.com
+                  - spotfleet.amazonaws.com
+                  - transitgateway.amazonaws.com
+  AstroPlaneEventBridgePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-event-bridge-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - events:*
+              - schemas:*
+              - scheduler:*
+              - pipes:*
+            Resource: "*"
+          - Effect: Allow
+            Action: iam:CreateServiceLinkedRole
+            Resource: 
+              - arn:aws:iam::*:role/aws-service-role/AmazonEventBridgeApiDestinationsServiceRolePolicy
+              - arn:aws:iam::*:role/aws-service-role/schemas.amazonaws.com/AWSServiceRoleForSchemas
+            Condition:
+              StringEquals:
+                iam:AWSServiceName: 
+                  - apidestinations.events.amazonaws.com
+                  - schemas.amazonaws.com
+          - Effect: Allow
+            Action:
+              - secretsmanager:CreateSecret
+              - secretsmanager:UpdateSecret
+              - secretsmanager:DeleteSecret
+              - secretsmanager:GetSecretValue
+              - secretsmanager:PutSecretValue
+            Resource: arn:aws:secretsmanager:*:*:secret:events!*
+          - Effect: Allow
+            Action: iam:PassRole
+            Resource: arn:aws:iam::*:role/*
+            Condition:
+              StringLike:
+                iam:PassedToService:
+                  - events.amazonaws.com
+                  - scheduler.amazonaws.com
+                  - pipes.amazonaws.com
+  AstroPlaneRoute53Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-route53-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - route53:*
+              - route53domains:*
+              - cloudfront:ListDistributions
+              - elasticloadbalancing:DescribeLoadBalancers
+              - elasticbeanstalk:DescribeEnvironments
+              - s3:ListBucket
+              - s3:GetBucketLocation
+              - s3:GetBucketWebsite
+              - ec2:DescribeVpcs
+              - ec2:DescribeVpcEndpoints
+              - ec2:DescribeRegions
+              - sns:ListTopics
+              - sns:ListSubscriptionsByTopic
+              - cloudwatch:DescribeAlarms
+              - cloudwatch:GetMetricStatistics
+            Resource: "*"
+          - Effect: Allow
+            Action: apigateway:GET
+            Resource: arn:aws:apigateway:*::/domainnames
+  AstroPlaneSQSPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-sqs-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sqs:*
+            Resource: "*"
+  AstroPlaneVPCPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-vpc-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:*
+              - ecr:BatchCheckLayerAvailability
+              - ecr:BatchGetImage
+              - ecr:DescribeRepositories
+              - ecr:GetAuthorizationToken
+              - ecr:GetDownloadUrlForLayer
+              - ecr:GetRepositoryPolicy
+              - ecr:ListImages
+            Resource: "*"
+
+  AstroPlaneIAMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${ClusterName}-astro-plane-iam-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - iam:*
+              - organizations:DescribeAccount
+              - organizations:DescribeOrganization
+              - organizations:DescribeOrganizationalUnit
+              - organizations:DescribePolicy
+              - organizations:ListChildren
+              - organizations:ListParents
+              - organizations:ListPoliciesForTarget
+              - organizations:ListRoots
+              - organizations:ListPolicies
+              - organizations:ListTargetsForPolicy
+            Resource: "*"
+
+  ClusterMgrUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub "${ClusterName}-user"
+
+  ClusterMgrUserGroupMembership:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref AstroPlaneGroup
+      Users:
+        - !Ref ClusterMgrUser
+
+  ClusterMgrUserAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref ClusterMgrUser
+
+  AstroPlaneS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${ClusterName}-astro-plane-k8s-state-store"
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: !Sub "${ClusterName}-astro-plane-k8s-state-store"
+        - Key: Environment
+          Value: dev
+  AstroPlaneSQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${ClusterName}-astro-plane-queue"
+      VisibilityTimeout: 30
+      MessageRetentionPeriod: 345600 # 4 days
+      Tags:
+        - Key: Name
+          Value: !Sub "${ClusterName}-astro-plane-queue"
+        - Key: Environment
+          Value: dev
+Outputs:
+  BucketName:
+    Value: !Ref AstroPlaneS3Bucket
+  AccessKey:
+    Value: !Ref ClusterMgrUserAccessKey
+  SecretKey:
+    Value: !GetAtt ClusterMgrUserAccessKey.SecretAccessKey
+    Export:
+      Name: !Sub "${ClusterName}-SecretKey"

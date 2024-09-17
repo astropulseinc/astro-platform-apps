@@ -1,0 +1,34 @@
+clusterName: v-gcp-cluster
+provider: gcp
+# notification:
+#   type: slack
+#   slack:
+#     webhookURL: https://hooks.slack.com/services/xxx  # update this
+provisioner:
+  type: selfHosted
+  selfHosted:
+    # this is the gcp project id
+    accountId: gcp-project-410909
+    ## for byo vpc, enable this and make sure to configure on your cluster
+    # networkId:  vpc-018f2dec8bb5ddfdd
+    bucketName: <your bucket name>
+    credentials:
+      type: static
+      data:
+        GOOGLE_APPLICATION_CREDENTIALS: "/path/to/your/gcp/credentials"
+clusterSpec:
+  dataPlane:
+    nodeGroups:
+    - name: test-mg
+      minNode: 3
+      maxNode: 6
+      instanceType: spot
+      machineTypes:
+      - e2-medium
+      labels:
+        hello: "test"
+  controlPlane:
+    nodeGroup:
+      name: control-plane
+      machineTypes:
+      - e2-medium
