@@ -1,0 +1,15 @@
+name: prometheus
+profileName: profile3
+namespace: monitoring
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://prometheus-community.github.io/helm-charts
+      chartVersion: 5.26.0
+      chartName: kube-state-metrics
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml
+    values:
+     type: object
+     object:
+       namespaced: false

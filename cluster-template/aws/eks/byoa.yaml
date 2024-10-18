@@ -1,4 +1,4 @@
-clusterName: eks-byoa
+clusterName: test-dev
 provider: aws
 # notification:
 #   type: slack
