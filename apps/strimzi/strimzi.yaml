@@ -1,5 +1,6 @@
 name: strimzi-kafka-operator
 profileName: profile3
+namespace: strimzi-kafka
 source:
   type: helm
   helm: 

@@ -1,6 +1,34 @@
 
 # Astro Platform Application Deployment Guide
 
+
+## Table of Contents
+1. [Download astroctl CLI](#download-astroctl-cli)
+2. [Generate API Key](#generate-api-key-to-interact-with-astro-platform)
+3. [Deploy an EKS Cluster](#deploy-an-eks-cluster)
+4. [Manage Clusters](#available-clusters-and-their-state)
+5. [Deploy Application Profiles](#deploy-application-profiles)
+6. [External Access Setup (Optional)](#bring-your-own-external-access-optional)
+   - [Kubernetes NGINX Ingress Controller](#kubernetes-nginx-ingress-controller)
+   - [TLS Certificate](#tls-certificate)
+   - [AWS Specific Setup](#aws)
+   - [Google Cloud DNS Setup](#google-cloud-dns)
+   - [External DNS](#external-dns)
+7. [Deploy Hello-world Application](#deploy-hello-world-application)
+8. [Remote Kubernetes Access](#remote-kubernetes-access)
+9. [Deploying Services](#deploying-services)
+   - [Cert-Manager](#cert-manager)
+   - [Grafana](#grafana)
+   - [Prometheus](#prometheus-operator)
+   - [Clickhouse](#clickhouse)
+   - [External Secrets](#external-secrets)
+   - [Confluent Operator (CFK)](#confluent-operator-cfk)
+   - [Strimzi Kafka](#strimzi-kafka)
+   - [Otel Collector](#otel-collector)
+   - [Kube State Metrics](#kube-state-metrics)
+10. [Kubernetes Nginx Ingress Controller](#kubernetes-nginx-ingress-controller-1)
+11. [Reference](#reference)
+
 ## Download astroctl CLI
 ```
 curl -L https://storage.googleapis.com/astroctl-cli/astroctl-$(go env GOOS).$(go env GOARCH).tar.gz | tar -xz
@@ -14,7 +42,7 @@ To generate an API key:
 astroctl auth login
 ```
 
-## Deploy a EKS Cluster
+## Deploy an EKS Cluster
 
 On this example, we will deploy a cluster on AWS EKS using a BYOA (Bring Your Own Account) method.
 
@@ -207,7 +235,8 @@ astroctl app logs hello-world -ojson
 ```
 
 ### Access
-To find the HTTP endpoint, run:
+To find the HTTP endpoint (if external access is configured), run:
+
 ```
 astroctl app get hello-world | grep endpoint
 ```
@@ -282,15 +311,54 @@ astroctl app apply -f apps/external-secrets/external-secrets.yaml
 
 To deploy Confluent Kafka (CFK):
 ```
-astroctl app apply -f apps/cfk/cfk.yaml
+astroctl app apply -f apps/confluent-kafka/confluent-operator.yaml
 ```
 
 ### Confluent Kafka
 
 To deploy Confluent Kafka:
 ```
-astroctl app apply -f apps/confluent-kafka/confluent-kafka.yaml
+astroctl app apply -f apps/confluent-kafka/kafka.yaml
 ```
+Check resources/cfk folder for more examples.
+
+
+## Strimzi Kafka
+
+To deploy Strimzi Operator:
+```
+astroctl app apply -f apps/strimzi/strimzi.yaml
+```
+
+### To deploy Strimzi Kafka:
+
+```
+astroctl app apply -f apps/strimzi/strimzi-kafka.yaml
+```
+
+Check resources/strimzi folder for more examples.
+
+
+## Otel Collector
+
+To deploy Otel Collector:
+```
+astroctl app apply -f apps/opentelemetry/otel-collector.yaml
+```
+
+## Kube State Metrics
+
+To deploy Kube State Metrics:
+```
+astroctl app apply -f apps/kube-state-metrics/ksm.yaml
+```
+
+
+
+
+
+
+
 
 # Kubernetes Nginx Ingress Controller
 
