@@ -1,8 +1,12 @@
 name: hello-world
-profileName: pre-selected-aws-cluster
+profileName: profile3
 source:
  type: image
  image:
    registry: docker.io
    repository: astropulse/latency
    tag: v1.0.0
+# only enable if you configure your cluster to have external access
+#  externalAccess:
+#    accessType: Ingress # this is default so not needed
+#    dnsName: "app.example.com"

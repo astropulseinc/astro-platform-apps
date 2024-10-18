@@ -1,23 +1,18 @@
 name: prometheus
-profileName: pre-selected-aws-cluster
+profileName: profile3
+namespace: monitoring
 source:
   type: helm
   helm: 
     repo: 
       repoURL: https://prometheus-community.github.io/helm-charts
-      chartVersion: 25.21.0
+      chartVersion: 25.27.0
       chartName: prometheus
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus/values.yaml
     values:
      type: object
      object:
-       namespaced: false
-       server:
-          tolerations:
-            - key: "node.cluster.platform.astropulse.io/purchase-option"
-              operator: "Equal"
-              value: "ondemand"
-              effect: "NoSchedule"
-            - key: "node.cluster.platform.astropulse.io/type"
-              operator: "Equal"
-              value: "dataplane"
-              effect: "NoSchedule"
+       alertmanager:
+         enabled: false
+       prometheus-pushgateway:
+         enabled: false

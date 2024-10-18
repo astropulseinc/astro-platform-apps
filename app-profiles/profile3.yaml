@@ -1,0 +1,3 @@
+# This profile pre-defines the cluster to be used for the application
+profileName: profile3
+clusterName: test-dev

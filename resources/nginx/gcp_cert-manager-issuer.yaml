@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: admin@example.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    # required as we are using wildcard. You can also use http01 if you are not using wildcard
+    - dns01:
+        cloudDNS:
+          ## provide your gcp project id, replace the value with your gcp project id
+          ## Change the project id to your own project id
+          project: example-project
+          serviceAccountSecretRef:
+            ## Change the service account name to your own service account name
+            name: dns01-solver
+            key: key.json

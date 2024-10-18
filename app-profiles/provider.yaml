@@ -1,5 +1,0 @@
-profileName: gcp-us-west2
-cloudProvider:
-  provider: gcp
-  region: us-west2
-availabilityTier: basic

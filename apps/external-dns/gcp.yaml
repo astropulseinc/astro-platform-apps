@@ -1,0 +1,33 @@
+name: external-dns
+profileName: profile3
+namespace: external-dns
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://charts.bitnami.com/bitnami
+      chartVersion: 7.3.2
+      chartName: external-dns
+    values:
+     type: object
+     object:
+       resources:
+         limits:
+           cpu: 100m
+           memory: 300Mi
+         requests:
+           cpu: 100m
+           memory: 300Mi
+       sources:
+         - service
+         - ingress
+       provider: google
+      # this is required if we are running outside of GCP
+      #  google:
+      #    project: <your-gcp-project-id>
+      #    serviceAccountSecret: external-dns-credentials # make sure to create this secret before deploying this app
+      # txtPrefix: a
+       policy: sync
+       domainFilters:
+         - astropulse.io
+       txtOwnerId: test-dev

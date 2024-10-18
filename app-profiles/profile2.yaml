@@ -1,0 +1,4 @@
+# This profile is used to select the cluster based on the proximity of the cluster to the user
+# This will select  cluster with in the organization.
+profileName: profile2
+
