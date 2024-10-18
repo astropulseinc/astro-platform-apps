@@ -53,6 +53,8 @@ To deploy a cluster, run:
  astroctl clusters apply -f cluster-template/aws/eks/byoa.yaml
 ```
 
+> **Note:** Admin access to the EKS cluster is required to deploy the services. If you need access, please contact [AstroPulse support](mailto:contact@astropulse.io). After obtaining access, run `astroctl auth login` to log in to the Astro Platform. To verify admin access, run `astroctl whoami` and check the roles section for the `admin` role.
+
 For different type of clusters, check the [documentations](https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-mgmt)
 
 ## Available Clusters and their State
@@ -67,7 +69,9 @@ astroctl clusters set-context test-dev
 
 ## Deploy Application Profiles
 
-Note: Update the `app-profiles/` file to include the `clusterName` of your choice. 
+> **Note:** Update the `app-profiles/` file to include the `clusterName` of your choice.
+
+
 To find the cluster names for your organization, run:
 
 ```
@@ -122,7 +126,7 @@ astroctl app apply -f apps/cert-manager/cert-manager.yaml
 If you are using AWS Certificate Manager, change the annotation in the apps/nginx/aws_nginx.yaml `service.beta.kubernetes.io/aws-load-balancer-ssl-cert` to your certificate ARN. Follow https://aws.amazon.com/certificate-manager/ to create a certificate. The
 existing aws_nginx.yaml is using the global default certificate that will be issued by cert-manager. 
 
-Make sure to disable the `default-ssl-certificate` in the apps/nginx/aws_nginx.yaml if using ACM.
+> **Note:** Make sure to disable the `default-ssl-certificate` in the apps/nginx/aws_nginx.yaml if using ACM.
 
 ```
 extraArgs:
@@ -273,7 +277,9 @@ astroctl clusters delete-context <clusterName>
 ```
 
 ## Deploying Services
-These examples provide popular cloud-native services that help manage the application lifecycle. Note that the platform does not create any external access configuration for applications when deploying through `helm` (helm repo), `repository` (helm from git code), or `yaml`.
+
+These examples showcase popular cloud-native services that assist in managing the application lifecycle. Please note that the platform does not automatically configure external access for applications when deploying via `helm` (helm repository), `repository` (helm from git repository), or `yaml`.
+
 
 ### Cert-Manager
 To deploy Cert-Manager:
@@ -352,13 +358,6 @@ To deploy Kube State Metrics:
 ```
 astroctl app apply -f apps/kube-state-metrics/ksm.yaml
 ```
-
-
-
-
-
-
-
 
 # Kubernetes Nginx Ingress Controller
 
