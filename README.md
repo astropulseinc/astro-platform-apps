@@ -359,7 +359,7 @@ To deploy Kube State Metrics:
 astroctl app apply -f apps/kube-state-metrics/ksm.yaml
 ```
 
-# Kubernetes Nginx Ingress Controller
+## Kubernetes Nginx Ingress Controller
 
 For AWS, Follow the steps in [Kubernetes Nginx Ingress Controller (AWS)](#aws)
 For Google Cloud DNS, Follow the steps in [Kubernetes Nginx Ingress Controller (Google Cloud DNS)](#google-cloud-dns)
