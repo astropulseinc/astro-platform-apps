@@ -27,7 +27,8 @@
    - [Otel Collector](#otel-collector)
    - [Kube State Metrics](#kube-state-metrics)
 10. [Kubernetes Nginx Ingress Controller](#kubernetes-nginx-ingress-controller-1)
-11. [Reference](#reference)
+11. [Application Debugging](#debugging)
+12. [Reference](#reference)
 
 ## Download astroctl CLI
 ```
@@ -398,6 +399,28 @@ astroctl app apply -f apps/kube-state-metrics/ksm.yaml
 
 For AWS, Follow the steps in [Kubernetes Nginx Ingress Controller (AWS)](#aws)
 For Google Cloud DNS, Follow the steps in [Kubernetes Nginx Ingress Controller (Google Cloud DNS)](#google-cloud-dns)
+
+
+### Debugging
+
+First check if the CI/CD pipeline is successful.
+```
+astroctl app events <app-name> -ojson
+```
+
+and check the Kubernetes events:
+```
+astroctl app events <app-name> -k -ojson
+```
+
+To get the logs for the application:
+```
+astroctl app logs <app-name> -ojson
+```
+
+**NOTE:** For EKS, if you see unauthorized error, give some time and try again as the platform has to regenerate AWS credentials that probably takes upto 2 minutes.
+
+If you see any other errors, please check the [AstroPulse Support](mailto:contact@astropulse.io)
 
 ### Reference
 
