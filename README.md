@@ -27,7 +27,8 @@
    - [Otel Collector](#otel-collector)
    - [Kube State Metrics](#kube-state-metrics)
 10. [Kubernetes Nginx Ingress Controller](#kubernetes-nginx-ingress-controller-1)
-11. [Reference](#reference)
+11. [Application Debugging](#debugging)
+12. [Reference](#reference)
 
 ## Download astroctl CLI
 ```
@@ -270,6 +271,9 @@ Open the browser and navigate to `http://localhost:8080`
 
 ## Remote Kubernetes Access
 1. Find the `clusterName`:
+
+For example, `hello-world` application is deployed on `test-dev` cluster. We can find the cluster name by running:
+
 ```
 astroctl app get hello-world | grep clusterName
 ```
@@ -279,12 +283,14 @@ astroctl clusters set-context <clusterName>
 ```
 This will generate the kubeconfig and change the context. Now, you can run standard `kubectl` commands.
 
-To delete the kubeconfig for your cluster:
+To delete the kubeconfig for your cluster on your local machine:
 ```
 astroctl clusters delete-context <clusterName>
 ```
 
 ## Deploying Services
+
+You can deploying any Cloud native services that works with Kubernetes and their interface is either via helm or yaml.
 
 These examples showcase popular cloud-native services that assist in managing the application lifecycle. Please note that the platform does not automatically configure external access for applications when deploying via `helm` (helm repository), `repository` (helm from git repository), or `yaml`.
 
@@ -399,8 +405,31 @@ astroctl app apply -f apps/kube-state-metrics/ksm.yaml
 For AWS, Follow the steps in [Kubernetes Nginx Ingress Controller (AWS)](#aws)
 For Google Cloud DNS, Follow the steps in [Kubernetes Nginx Ingress Controller (Google Cloud DNS)](#google-cloud-dns)
 
+
+### Debugging
+
+First check if the CI/CD pipeline is successful.
+```
+astroctl app events <app-name> -ojson
+```
+
+and check the Kubernetes events:
+```
+astroctl app events <app-name> -k -ojson
+```
+
+To get the logs for the application:
+```
+astroctl app logs <app-name> -ojson
+```
+
+**NOTE:** For EKS, if you see unauthorized error, give some time and try again as the platform has to regenerate AWS credentials that probably takes upto 2 minutes.
+
+If you see any other errors, please check the [AstroPulse Support](mailto:contact@astropulse.io)
+
 ### Reference
 
 - Any changes on the git will trigger a pipeline and takes upto 3 minutes to get deployed.
-- Application with source type yaml doesn't have logs access via astroctl. You can use `kubectl` to get the logs.
-- You can always use `kubectl` to get the logs and events for any application.
+- You can always use `kubectl` to get the logs and events for any application. Follow [Remote Kubernetes Access](#remote-kubernetes-access) to access the cluster.
+- For `private git repository`, you need to setup the authentication for the git repository on the astro platfrom. Please contact [AstroPulse Support](mailto:contact@astropulse.io) for more information on this. 
+   - In future releases, we will have automatic integration with private git repository via `astroctl app config set git.token <token> git.url=<https-url>`.
