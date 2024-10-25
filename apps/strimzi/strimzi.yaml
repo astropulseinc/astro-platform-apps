@@ -14,4 +14,5 @@ source:
      type: object
      object:
        namespaced: false
+       watchAnyNamespace: true
 
