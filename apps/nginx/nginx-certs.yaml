@@ -1,12 +1,11 @@
-name: kafka-cluster
-profileName: pre-selected-aws-cluster
-namespace: kafka
+name: nginx-certificates
+profileName:  profile3
+namespace: nginx
 source:
   type: yaml
   yaml: 
     repo: 
-      path: resources/cfk
+      path: resources/nginx
       repoURL: https://github.com/astropulseinc/astro-platform-apps.git
       targetRevision: main
     exclude: "*.md"
-

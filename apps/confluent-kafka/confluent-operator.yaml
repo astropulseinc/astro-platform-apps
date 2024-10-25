@@ -1,0 +1,16 @@
+name: confluent-operator
+profileName: profile3
+namespace: confluent
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://packages.confluent.io/helm
+      chartVersion: 0.921.20
+      chartName: confluent-for-kubernetes
+    # follow this doc, https://docs.confluent.io/operator/current/co-deploy-cfk.html
+    values:
+     type: object
+     object:
+       namespaced: false
+

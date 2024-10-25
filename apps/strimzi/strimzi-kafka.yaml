@@ -1,0 +1,11 @@
+name: kafka-cluster
+profileName:  profile3
+namespace: strimzi-kafka
+source:
+  type: yaml
+  yaml: 
+    repo: 
+      path: resources/strimzi
+      repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+      targetRevision: main
+    exclude: "*.md"

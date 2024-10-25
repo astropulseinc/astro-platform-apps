@@ -1,5 +1,6 @@
 name: grafana-service
-profileName: pre-selected-aws-cluster
+profileName:  profile3
+namespace: monitoring
 source:
   type: helm
   helm: 
@@ -7,22 +8,19 @@ source:
       repoURL: https://grafana.github.io/helm-charts
       chartVersion: 8.0.0
       chartName: grafana
+    # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
     values:
      type: object
      object:
        namespaced: false
        persistence:
+         # make sure to use the right storage class for the PVC in the resources/ folder. Only storage classes that are created part of the cluster for eks is gp2. There will be no default storage class for the PVC. So make sure to create the storage class before deploying the application.
+         storageClassName: gp2 
          type: pvc
          enabled: true
          size: 10Gi
        adminUser: admin
        adminPassword: 66YQ8CYImcatKjM3JDx5ykBYb9EQeQSZcKIhY6llq4
-       tolerations:
-        - key: "node.cluster.platform.astropulse.io/purchase-option"
-          operator: "Equal"
-          value: "ondemand"
-          effect: "NoSchedule" 
-        - key: "node.cluster.platform.astropulse.io/type"
-          operator: "Equal"
-          value: "dataplane"
-          effect: "NoSchedule"
+       plugins:
+        - vertamedia-clickhouse-datasource
+        - grafana-clickhouse-datasource

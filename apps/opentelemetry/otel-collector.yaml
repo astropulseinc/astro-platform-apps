@@ -1,0 +1,26 @@
+name: otel-collector-operator
+profileName: profile3
+namespace: otel-collector
+source:
+  type: helm
+  helm: 
+    repo: 
+      repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+      chartVersion: 0.108.0
+      chartName:  opentelemetry-collector
+    # https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/values.yaml
+    values:
+     type: object
+     object:
+       mode: daemonset
+       image:
+          repository: otel/opentelemetry-collector-k8s
+       presets:
+         hostMetrics:
+           enabled: true
+         kubernetesEvents:
+           enabled: true
+         kubeletMetrics:
+           enabled: true
+         kubernetesAttributes:
+           enabled: true

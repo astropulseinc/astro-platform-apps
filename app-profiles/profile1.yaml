@@ -1,0 +1,6 @@
+# This profile is used to select the GCP region
+# The platform will select the cluster based on the region and provider
+profileName: profile1
+cloudProvider:
+  provider: aws # gcp 
+  region: us-west-2
