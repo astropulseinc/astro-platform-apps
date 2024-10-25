@@ -229,7 +229,7 @@ astroctl app events hello-world -ojson
 ```
 To view Kubernetes events:
 ```
-astroctl app events hello-world -k ojson
+astroctl app events hello-world -k -ojson
 ```
 
 ### Logs
@@ -253,17 +253,25 @@ astroctl clusters set-context set-context
 ```
 
 Then you can use port forwarding to access the application:
+
+First find the target namespace:
 ```
-kubectl port-forward svc/hello-world 8080:80 -n <namespace>
+astroctl app get hello-world | grep targetNamespace
 ```
 
-You can find the <namespace> in the `astroctl app get <app-name>` command.
+Then run the following command:
+
+```
+export TARGET_NAMESPACE=$(astroctl app get hello-world | grep targetNamespace | awk '{print $2}')
+kubectl port-forward svc/$TARGET_NAMESPACE-app 8080:80 -n $TARGET_NAMESPACE
+```
+Open the browser and navigate to `http://localhost:8080`
 
 
 ## Remote Kubernetes Access
 1. Find the `clusterName`:
 ```
-astroctl app status hello-world | grep clusterName
+astroctl app get hello-world | grep clusterName
 ```
 2. Set the context with the retrieved `clusterName`:
 ```
@@ -280,6 +288,7 @@ astroctl clusters delete-context <clusterName>
 
 These examples showcase popular cloud-native services that assist in managing the application lifecycle. Please note that the platform does not automatically configure external access for applications when deploying via `helm` (helm repository), `repository` (helm from git repository), or `yaml`.
 
+> **Note:**  Make sure to use the right storage class for the persistent volume claim (PVC) in the resources/ folder. Only storage classes that are created part of the cluster for eks is gp2. There will be no default storage class for the PVC. So make sure to create the storage class before deploying the application.
 
 ### Cert-Manager
 To deploy Cert-Manager:
@@ -291,6 +300,22 @@ To deploy Grafana:
 ```
 astroctl app apply -f apps/grafana/grafana.yaml
 ```
+#### Access via port-forward
+
+First get the admin password:
+
+```
+kubectl -n monitoring get secret -l app.kubernetes.io/name=grafana -o jsonpath="{.items[0].data.admin-password}" | base64 --decode; echo
+```
+
+and run the following command:
+
+```
+kubectl -n monitoring port-forward $(kubectl -n monitoring get pods -l app.kubernetes.io/name=grafana -o name) 3000:3000
+```
+
+Then open the browser and navigate to `http://localhost:3000` with the username `admin` and the password you retrieved earlier.
+
 
 ### Prometheus Operator
 To deploy Prometheus:
@@ -298,8 +323,17 @@ To deploy Prometheus:
 astroctl app apply -f apps/prometheus/prometheus.yaml
 ```
 
+#### Access via port-forward
+
+```
+kubectl port-forward $(kubectl get pods -l app.kubernetes.io/name=prometheus,app.kubernetes.io/component=server -o name) 9090:9090
+```
+
+Then open the browser and navigate to `http://localhost:9090`
+
 ## Clickhouse
 To deploy Clickhouse:
+
 ```
 astroctl app apply -f apps/clickhouse/clickhouse.yaml
 ```
@@ -310,7 +344,7 @@ This will allows you to connect to cloud services like AWS Secrets Manager, Goog
 
 To deploy External Secrets:
 ```
-astroctl app apply -f apps/external-secrets/external-secrets.yaml
+astroctl app apply -f apps/external-secret/external-secret.yaml
 ```
 
 ## Confluent Operator (CFK)
