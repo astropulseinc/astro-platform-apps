@@ -370,11 +370,12 @@ To deploy Strimzi Operator:
 astroctl app apply -f apps/strimzi/strimzi.yaml
 ```
 
-### To deploy Strimzi Kafka:
+### To deploy Strimzi Kafka (ephemeral storage):
 
 ```
 astroctl app apply -f apps/strimzi/strimzi-kafka.yaml
 ```
+and a topic `test-topic`.
 
 Check resources/strimzi folder for more examples.
 
