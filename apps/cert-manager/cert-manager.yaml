@@ -1,5 +1,6 @@
 name: cert-manager
-profileName: pre-selected-aws-cluster
+profileName: profile3
+namespace: cert-manager
 source:
   type: helm
   helm: 
@@ -11,42 +12,4 @@ source:
      type: object
      object:
        installCRDs: true
-       tolerations:
-         - key: "node.cluster.platform.astropulse.io/purchase-option"
-           operator: "Equal"
-           value: "ondemand"
-           effect: "NoSchedule" 
-         - key: "node.cluster.platform.astropulse.io/type"
-           operator: "Equal"
-           value: "dataplane"
-           effect: "NoSchedule"
-       cainjector:
-         tolerations:
-         - key: "node.cluster.platform.astropulse.io/purchase-option"
-           operator: "Equal"
-           value: "ondemand"
-           effect: "NoSchedule" 
-         - key: "node.cluster.platform.astropulse.io/type"
-           operator: "Equal"
-           value: "dataplane"
-           effect: "NoSchedule"
-       webhook:
-         tolerations:
-         - key: "node.cluster.platform.astropulse.io/purchase-option"
-           operator: "Equal"
-           value: "ondemand"
-           effect: "NoSchedule" 
-         - key: "node.cluster.platform.astropulse.io/type"
-           operator: "Equal"
-           value: "dataplane"
-           effect: "NoSchedule"
-       startupapicheck:
-          tolerations:
-          - key: "node.cluster.platform.astropulse.io/purchase-option"
-            operator: "Equal"
-            value: "ondemand"
-            effect: "NoSchedule" 
-          - key: "node.cluster.platform.astropulse.io/type"
-            operator: "Equal"
-            value: "dataplane"
-            effect: "NoSchedule"
+
