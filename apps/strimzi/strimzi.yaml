@@ -5,10 +5,10 @@ source:
   type: helm
   helm: 
     repo: 
-      repoURL: oci://quay.io/strimzi-helm/strimzi-kafka-operator
+      repoURL: oci://quay.io/strimzi-helm
       # the version is tied with the git tag, to find the corresponding tag, go to https://github.com/strimzi/strimzi-kafka-operator/tags
       chartVersion: 0.43.0
-      chartName: confluent-for-kubernetes
+      chartName: strimzi-kafka-operator
     # https://github.com/strimzi/strimzi-kafka-operator/blob/main/packaging/helm-charts/helm3/strimzi-kafka-operator/values.yaml
     values:
      type: object

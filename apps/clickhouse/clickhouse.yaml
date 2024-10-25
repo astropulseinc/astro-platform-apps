@@ -1,4 +1,4 @@
-name: grafana-service
+name: clickhouse
 profileName:  profile3
 namespace: clickhouse
 source:

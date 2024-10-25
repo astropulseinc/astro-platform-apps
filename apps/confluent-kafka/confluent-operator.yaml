@@ -1,5 +1,6 @@
 name: confluent-operator
 profileName: profile3
+namespace: confluent
 source:
   type: helm
   helm: 

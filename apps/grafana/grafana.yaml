@@ -14,6 +14,8 @@ source:
      object:
        namespaced: false
        persistence:
+         # make sure to use the right storage class for the PVC in the resources/ folder. Only storage classes that are created part of the cluster for eks is gp2. There will be no default storage class for the PVC. So make sure to create the storage class before deploying the application.
+         storageClassName: gp2 
          type: pvc
          enabled: true
          size: 10Gi
@@ -22,4 +24,3 @@ source:
        plugins:
         - vertamedia-clickhouse-datasource
         - grafana-clickhouse-datasource
-       
