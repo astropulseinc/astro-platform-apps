@@ -1,9 +1,5 @@
 clusterName: eks-byo-vpc
 provider: aws
-# notification:
-#   type: slack
-#   slack:
-#     webhookURL: https://hooks.slack.com/services/xxx  # update this
 region: us-west-2
 provisioner:
   type: eks

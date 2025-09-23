@@ -1,9 +1,5 @@
 clusterName: v-aws-byoa
 provider: aws
-# notification:
-#   type: slack
-#   slack:
-#     webhookURL: https://hooks.slack.com/services/xxx
 region: us-west-2
 provisioner:
   type: selfHosted
