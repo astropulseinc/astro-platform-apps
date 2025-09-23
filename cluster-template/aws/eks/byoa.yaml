@@ -1,9 +1,5 @@
 clusterName: test-dev
 provider: aws
-# notification:
-#   type: slack
-#   slack:
-#     webhookURL: https://hooks.slack.com/services/xxxx
 region: us-east-1
 provisioner:
   type: eks
