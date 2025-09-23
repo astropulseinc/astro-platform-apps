@@ -1,9 +1,5 @@
 clusterName: v-gcp-cluster
 provider: gcp
-# notification:
-#   type: slack
-#   slack:
-#     webhookURL: https://hooks.slack.com/services/xxx  # update this
 provisioner:
   type: selfHosted
   selfHosted:
