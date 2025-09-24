@@ -25,7 +25,6 @@ provisioner:
           id: subnet-0123456789abcdef1
     credentials:
       type: dynamic
-#approvalWorkflow: true
 clusterSpec:
   dataPlane:
     nodeGroups:

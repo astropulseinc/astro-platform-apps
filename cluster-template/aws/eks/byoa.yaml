@@ -7,7 +7,6 @@ provisioner:
     accountId: <your account id>
     credentials:
       type: dynamic
-#approvalWorkflow: true
 clusterSpec:
   dataPlane:
     nodeGroups:
