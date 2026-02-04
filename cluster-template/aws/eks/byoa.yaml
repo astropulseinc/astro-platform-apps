@@ -1,19 +1,40 @@
-clusterName: test-dev
-provider: aws
-region: us-east-1
-provisioner:
-  type: eks
-  eks:
-    accountId: <your account id>
-    credentials:
-      type: dynamic
-clusterSpec:
-  dataPlane:
-    nodeGroups:
-    - name: omlet-stack-node-group
-      minNode: 1
-      maxNode: 3
-      machineTypes:
-      - t3.medium
-      labels:
-        hello: test
+# EKS Cluster - Production Configuration (Dynamic Credentials)
+#
+# This is the recommended approach for production EKS clusters.
+# Uses IAM role assumption for secure, keyless authentication.
+#
+# Prerequisites:
+# 1. Run: astroctl cloud aws connect --account-id <account> --cluster-name <name> --region <region>
+# 2. Deploy the CloudFormation stack in your AWS account
+# 3. Wait for IAM role verification to complete
+#
+# Usage: astroctl infra k8s apply -f byoa.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: test-dev
+  provider: aws
+  region: us-east-1
+  provisioner:
+    type: eks
+    eks:
+      # AWS Account ID (required, 12 digits)
+      accountId: <your account id>
+
+      # Dynamic credentials via IAM role assumption (recommended)
+      credentials:
+        type: dynamic
+
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: omlet-stack-node-group
+          minNode: 1
+          maxNode: 3
+          machineTypes:
+            - t3.medium
+          labels:
+            hello: test

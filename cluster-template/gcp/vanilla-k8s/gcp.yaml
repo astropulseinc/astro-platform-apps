@@ -1,30 +1,56 @@
-clusterName: v-gcp-cluster
-provider: gcp
-provisioner:
-  type: selfHosted
-  selfHosted:
-    # this is the gcp project id
-    accountId: gcp-project-410909
-    ## for byo vpc, enable this and make sure to configure on your cluster
-    # networkId:  vpc-018f2dec8bb5ddfdd
-    bucketName: <your bucket name>
-    credentials:
-      type: static
-      data:
-        GOOGLE_APPLICATION_CREDENTIALS: "/path/to/your/gcp/credentials"
-clusterSpec:
-  dataPlane:
-    nodeGroups:
-    - name: test-mg
-      minNode: 3
-      maxNode: 6
-      instanceType: spot
-      machineTypes:
-      - e2-medium
-      labels:
-        hello: "test"
-  controlPlane:
-    nodeGroup:
-      name: control-plane
-      machineTypes:
-      - e2-medium
+# GCP Self-Hosted Kubernetes Cluster
+#
+# Platform-managed Kubernetes on GCP Compute Engine instances.
+# Uses kOps for cluster lifecycle management.
+#
+# Prerequisites:
+# 1. GCS bucket for state storage
+# 2. GCP service account with appropriate permissions
+# 3. Service account key JSON file
+#
+# Usage: astroctl infra k8s apply -f gcp.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: v-gcp-cluster
+  provider: gcp
+  provisioner:
+    type: selfHosted
+    selfHosted:
+      # GCP Project ID (required)
+      accountId: gcp-project-410909
+
+      # GCS bucket for cluster state (required)
+      bucketName: <your bucket name>
+
+      # Optional: Bring Your Own VPC
+      # networkId: vpc-018f2dec8bb5ddfdd
+
+      # Static credentials (service account key)
+      credentials:
+        type: static
+        data:
+          GOOGLE_APPLICATION_CREDENTIALS: "/path/to/your/gcp/credentials"
+
+  clusterSpec:
+    # Control plane configuration (required for self-hosted)
+    controlPlane:
+      nodeGroup:
+        name: control-plane
+        machineTypes:
+          - e2-medium
+
+    # Worker node configuration
+    dataPlane:
+      nodeGroups:
+        - name: test-mg
+          minNode: 3
+          maxNode: 6
+          instanceType: spot
+          machineTypes:
+            - e2-medium
+          labels:
+            hello: "test"
