@@ -1,0 +1,51 @@
+# GKE Autopilot Cluster
+#
+# Autopilot is Google's fully managed Kubernetes mode.
+# Google handles all node provisioning, scaling, security updates, and optimization.
+# You pay per pod resources (CPU/memory), not per node.
+#
+# Benefits:
+# - No node management required
+# - Automatic security updates and patches
+# - Built-in cost optimization
+# - Automatic scaling based on workload demands
+# - SLA-backed uptime guarantees
+#
+# Note: clusterSpec.dataPlane is IGNORED in Autopilot mode - GKE manages nodes automatically.
+#
+# Prerequisites:
+# 1. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
+# 2. Complete the Cloud Shell setup script
+#
+# Usage: astroctl infra k8s apply -f gke-autopilot.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: my-autopilot-cluster
+  provider: gcp
+  region: us-central1
+  provisioner:
+    type: gke
+    gke:
+      # GCP Project ID (required)
+      projectId: my-gcp-project-123
+
+      # Enable Autopilot mode (required for Autopilot)
+      # When true, GKE manages all node provisioning automatically
+      autopilot: true
+
+      # Dynamic credentials via Workload Identity Federation
+      credentials:
+        type: dynamic
+
+      # Optional: Custom authorized networks for API access
+      # authorizedNetworks:
+      #   - "10.0.0.0/8"
+      #   - "192.168.1.0/24"
+
+# Note: clusterSpec is optional for Autopilot
+# GKE automatically provisions nodes based on workload requirements
+# Any nodeGroups defined here will be IGNORED
