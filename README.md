@@ -14,15 +14,14 @@ Astro Platform simplifies Kubernetes cluster management and application deployme
 Before you begin, ensure you have:
 
 - **Cloud Account**: AWS, GCP, or Azure account with appropriate permissions
-- **Go** (for CLI installation): Required to detect OS/architecture. Alternatively, download directly from [releases](https://storage.googleapis.com/astroctl-cli/)
+- **astroctl CLI**: Install with `curl -fsSL https://astropulse.io/install.sh | bash`
 - **kubectl**: For direct Kubernetes cluster access ([install guide](https://kubernetes.io/docs/tasks/tools/))
 
 ## Quick Start
 
 ```bash
 # 1. Install CLI
-curl -L https://storage.googleapis.com/astroctl-cli/astroctl-$(go env GOOS).$(go env GOARCH).tar.gz | tar -xz
-chmod +x astroctl && sudo mv astroctl /usr/local/bin
+curl -fsSL https://astropulse.io/install.sh | bash
 
 # 2. Login
 astroctl auth login
@@ -81,9 +80,7 @@ astroctl app status hello-world
 
 ## Download astroctl CLI
 ```
-curl -L https://storage.googleapis.com/astroctl-cli/astroctl-$(go env GOOS).$(go env GOARCH).tar.gz | tar -xz
-chmod +x astroctl
-sudo mv astroctl /usr/local/bin
+curl -fsSL https://astropulse.io/install.sh | bash
 ```
 
 ## Generate API Key to Interact with Astro Platform
