@@ -1,0 +1,30 @@
+# Bring Your Own Kubernetes (BYOK) — Register an existing cluster
+#
+# Register any Kubernetes cluster with Astro Platform.
+# Works with EKS, GKE, AKS, on-premises, or local clusters (Kind, Minikube).
+# A lightweight agent is deployed that creates a secure reverse tunnel (mTLS).
+#
+# Prerequisites:
+# 1. kubectl access to the cluster you want to register
+# 2. astroctl CLI installed and authenticated
+#
+# Usage: astroctl infra k8s register -f register.yaml
+#
+# Or use the CLI directly:
+#   astroctl infra k8s register --cluster-name my-cluster
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-registration
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterRegistration
+spec:
+  # Name for the cluster in the platform (required)
+  clusterName: my-existing-cluster
+
+  # Cloud region override (optional — auto-detected if omitted)
+  # region: us-east-1
+
+  # Labels for organization and filtering (optional)
+  # labels:
+  #   environment: production
+  #   team: platform

@@ -1,0 +1,53 @@
+# AKS Cluster - Production Configuration (Dynamic Credentials)
+#
+# This is the recommended approach for production AKS clusters.
+# Uses Azure federated identity for secure, keyless authentication.
+#
+# Prerequisites:
+# 1. Run: astroctl cloud azure connect --subscription-id <id> --cluster-name <name> --region <region>
+# 2. Complete the Azure setup in your subscription
+# 3. Wait for federated identity verification to complete
+#
+# Usage: astroctl infra k8s apply -f byoa.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: my-aks-cluster
+  provider: azure
+  region: eastus
+  provisioner:
+    type: aks
+    aks:
+      # Azure Subscription ID (required, UUID format)
+      subscriptionId: "00000000-0000-0000-0000-000000000000"
+
+      # Azure Resource Group (required)
+      resourceGroup: "rg-astro-production"
+
+      # Enable Workload Identity and OIDC Issuer (recommended)
+      enableWorkloadIdentity: true
+      enableOidcIssuer: true
+
+      # Network plugin (default: azure)
+      # Options: azure, kubenet
+      networkPlugin: azure
+
+      # Dynamic credentials via federated identity (recommended)
+      credentials:
+        type: dynamic
+
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: systempool
+          minNode: 2
+          maxNode: 5
+          instanceType: ondemand  # or "spot" for cost savings
+          machineTypes:
+            - Standard_DC2as_v5
+          labels:
+            environment: production
+            tier: application
