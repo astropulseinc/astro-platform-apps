@@ -9,10 +9,10 @@
 #   Creates IAM user, S3 bucket, policies via CloudFormation.
 #   Credentials are auto-stored in the platform vault — no manual copy needed.
 #
-# Option 2 — Connect (check status or provide your own credentials):
-#   astroctl cloud aws selfHosted connect --region <region> --cluster-name <name>
-#   - Without credentials: checks vault status (reports if setup was already run)
-#   - With --profile or --access-key: validates and stores your IAM keys in vault
+# Option 2 — Connect (check vault status or BYOC):
+#   astroctl cloud aws selfHosted connect --cluster-name <name>
+#   - Without credentials: checks vault status (was setup already run?)
+#   - With --profile or --access-key: BYOC — validates and stores your IAM keys in vault
 #
 # After either option, your YAML uses credentials.type: vault (no keys in YAML).
 #
@@ -33,8 +33,10 @@ spec:
       # Get it with: aws sts get-caller-identity --query Account --output text
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
 
-      # S3 bucket for cluster state (created by setup command)
-      bucketName: "<YOUR_S3_BUCKET>"
+      # S3 bucket for cluster state
+      # If you ran setup: this was created automatically — check CloudFormation outputs
+      # If BYOC: provide your own bucket name
+      bucketName: "<S3_BUCKET_FROM_SETUP>"
 
       # Optional: Bring Your Own VPC
       # networkId: vpc-018f2dec8bb5ddfdd
