@@ -33,8 +33,9 @@ spec:
       # Get it with: aws sts get-caller-identity --query Account --output text
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
 
-      # S3 bucket for cluster state (optional — use value from setup output if needed)
-      # bucketName: "<from-setup-output>"
+
+      # S3 bucket for cluster state (from setup output)
+      bucketName: "<from-setup-output>"
 
       # Optional: Bring Your Own VPC
       # networkId: vpc-018f2dec8bb5ddfdd

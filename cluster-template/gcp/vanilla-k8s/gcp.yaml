@@ -32,8 +32,8 @@ spec:
       # Get it with: gcloud config list --format="value(core.project)"
       accountId: "<YOUR_GCP_PROJECT_ID>"
 
-      # GCS bucket for cluster state (optional — use value from setup output if needed)
-      # bucketName: "<from-setup-output>"
+      # GCS bucket for cluster state (from setup output)
+      bucketName: "<from-setup-output>"
 
       # Optional: Bring Your Own VPC
       # networkId: vpc-018f2dec8bb5ddfdd
