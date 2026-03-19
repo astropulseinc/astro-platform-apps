@@ -40,6 +40,17 @@ astroctl app apply -f apps/hello-world/demo.yaml
 astroctl app status hello-world
 ```
 
+## Cluster Templates
+
+| Provider | Template | Description |
+|----------|----------|-------------|
+| AWS | [cluster-template/aws/eks/byoa.yaml](cluster-template/aws/eks/byoa.yaml) | EKS with dynamic credentials |
+| AWS | [cluster-template/aws/eks/byo-vpc.yaml](cluster-template/aws/eks/byo-vpc.yaml) | EKS with existing VPC |
+| Azure | [cluster-template/azure/aks/byoa.yaml](cluster-template/azure/aks/byoa.yaml) | AKS with federated identity |
+| GCP | [cluster-template/gcp/gke/cluster.yaml](cluster-template/gcp/gke/cluster.yaml) | GKE with WIF |
+| GCP | [cluster-template/gcp/gke/autopilot.yaml](cluster-template/gcp/gke/autopilot.yaml) | GKE Autopilot |
+| BYOK | [cluster-template/byok/register.yaml](cluster-template/byok/register.yaml) | Register any existing cluster |
+
 ## Table of Contents
 1. [Download astroctl CLI](#download-astroctl-cli)
 2. [Generate API Key](#generate-api-key-to-interact-with-astro-platform)
