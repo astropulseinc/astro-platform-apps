@@ -22,9 +22,11 @@ spec:
     type: aks
     aks:
       # Azure Subscription ID (required, UUID format)
+      # Get it with: az account show --query id --output tsv
       subscriptionId: "00000000-0000-0000-0000-000000000000"
 
       # Azure Resource Group (required)
+      # List yours with: az group list --query "[].name" --output tsv
       resourceGroup: "rg-astro-production"
 
       # Dynamic credentials via federated identity (recommended)
