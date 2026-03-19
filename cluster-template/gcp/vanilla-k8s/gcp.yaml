@@ -1,16 +1,24 @@
 # GCP Self-Hosted Kubernetes Cluster
 #
-# Platform-managed Kubernetes on GCP Compute Engine instances.
-# Uses kOps for cluster lifecycle management.
+# Platform-managed Kubernetes on GCP Compute Engine instances (kOps-based).
 #
-# Prerequisites:
-# 1. GCS bucket for state storage
-# 2. GCP service account with appropriate permissions
-# 3. Service account key JSON file
+# Two ways to set up credentials:
+#
+# Option 1 — Automated setup (recommended):
+#   astroctl cloud gcp selfHosted setup --project-id <id> --region <region> --cluster-name <name>
+#   Creates service account, GCS bucket, enables APIs.
+#   Credentials are auto-stored in the platform vault — no manual copy.
+#
+# Option 2 — Bring your own credentials (BYOC):
+#   astroctl cloud gcp selfHosted connect --project-id <id> --region <region> \
+#       --bucket <bucket> --cluster-name <name>
+#   Validates and stores your existing service account key in the vault.
+#
+# After either option, use credentials.type: vault (no keys in YAML).
 #
 # Usage: astroctl infra k8s apply -f gcp.yaml
 #
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted/gcp
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
@@ -21,36 +29,32 @@ spec:
     type: selfHosted
     selfHosted:
       # GCP Project ID (required)
-      accountId: gcp-project-410909
+      # Get it with: gcloud config list --format="value(core.project)"
+      accountId: "<YOUR_GCP_PROJECT_ID>"
 
-      # GCS bucket for cluster state (required)
-      bucketName: <your bucket name>
+      # GCS bucket for cluster state (created by setup command)
+      bucketName: "<YOUR_GCS_BUCKET>"
 
       # Optional: Bring Your Own VPC
       # networkId: vpc-018f2dec8bb5ddfdd
 
-      # Static credentials (service account key)
+      # Vault credentials — setup or connect stores these automatically
       credentials:
-        type: static
-        data:
-          GOOGLE_APPLICATION_CREDENTIALS: "/path/to/your/gcp/credentials"
+        type: vault
 
   clusterSpec:
-    # Control plane configuration (required for self-hosted)
     controlPlane:
       nodeGroup:
         name: control-plane
         machineTypes:
           - e2-medium
-
-    # Worker node configuration
     dataPlane:
       nodeGroups:
-        - name: test-mg
+        - name: worker-ng
           minNode: 3
           maxNode: 6
           instanceType: spot
           machineTypes:
             - e2-medium
           labels:
-            hello: "test"
+            environment: production

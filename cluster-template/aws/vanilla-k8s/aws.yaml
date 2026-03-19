@@ -1,30 +1,60 @@
-clusterName: v-aws-byoa
-provider: aws
-region: us-west-2
-provisioner:
-  type: selfHosted
-  selfHosted:
-    accountId: "<your account id>"
-    # for byo vpc, enable this and make sure to configure on your cluster
-#    networkId:  vpc-018f2dec8bb5ddfdd
-    bucketName: "<your bucket name>"
-    credentials:
-      type: static
-      data:
-        AWS_ACCESS_KEY_ID: "<your access key id>"
-        AWS_SECRET_ACCESS_KEY: "<your secret access key>"
-clusterSpec:
-  dataPlane:
-    nodeGroups:
-    - name: test-mg
-      minNode: 3
-      maxNode: 6
-      machineTypes:
-      - t3.large
-      labels:
-        hello: "test"
-  controlPlane:
-    nodeGroup:
-      name: control-plane
-      machineTypes:
-      - t3.medium
+# AWS Self-Hosted Kubernetes Cluster
+#
+# Platform-managed Kubernetes on AWS EC2 instances (kOps-based).
+#
+# Two ways to set up credentials:
+#
+# Option 1 — Automated setup (recommended):
+#   astroctl cloud aws selfHosted setup --account-id <id> --region <region> --cluster-name <name>
+#   Creates IAM user, S3 bucket, policies via CloudFormation.
+#   Credentials are auto-stored in the platform vault — no manual copy.
+#
+# Option 2 — Bring your own credentials (BYOC):
+#   astroctl cloud aws selfHosted connect --profile <profile> --region <region> \
+#       --bucket <bucket> --cluster-name <name>
+#   Validates and stores your existing IAM keys in the vault.
+#
+# After either option, use credentials.type: vault (no keys in YAML).
+#
+# Usage: astroctl infra k8s apply -f aws.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted/aws
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: v-aws-byoa
+  provider: aws
+  region: us-west-2 # aws configure get region
+  provisioner:
+    type: selfHosted
+    selfHosted:
+      # AWS Account ID (required)
+      # Get it with: aws sts get-caller-identity --query Account --output text
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
+
+      # S3 bucket for cluster state (created by setup command)
+      bucketName: "<YOUR_S3_BUCKET>"
+
+      # Optional: Bring Your Own VPC
+      # networkId: vpc-018f2dec8bb5ddfdd
+
+      # Vault credentials — setup or connect stores these automatically
+      credentials:
+        type: vault
+
+  clusterSpec:
+    controlPlane:
+      nodeGroup:
+        name: control-plane
+        machineTypes:
+          - t3.medium
+    dataPlane:
+      nodeGroups:
+        - name: worker-ng
+          minNode: 3
+          maxNode: 6
+          machineTypes:
+            - t3.large
+          labels:
+            environment: production
