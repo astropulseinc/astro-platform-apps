@@ -1,6 +1,8 @@
 # Bring Your Own Kubernetes (BYOK) — Cluster Registration
 
-Register any existing Kubernetes cluster with Astro Platform. No provisioning needed — just connect your cluster.
+Register any existing Kubernetes cluster with Astro Platform. No cloud credentials needed — just kubectl access.
+
+> **Prefer a visual interface?** You can also register clusters through the [Web Console](https://astropulse.io/console).
 
 ## Supported Clusters
 
@@ -20,12 +22,16 @@ astroctl infra k8s register --cluster-name my-cluster
 astroctl infra k8s register -f register.yaml
 ```
 
+## What Happens
+
+A lightweight agent is deployed into your cluster. It connects outbound to the platform via an encrypted mTLS tunnel. No firewall changes required. Your cluster appears in the platform within seconds.
+
 ## Split-Team Workflow
 
 For enterprise teams where platform and infrastructure teams are separate:
 
 ```bash
-# Platform team: register (no kubectl access needed)
+# Platform team: register only (no kubectl access needed)
 astroctl infra k8s register --cluster-name prod-cluster --no-install
 
 # Infrastructure team: install agent (has kubectl access)
@@ -42,7 +48,7 @@ astroctl infra k8s register --cluster-name my-cluster --dry-run
 
 ## After Registration
 
-Once registered, the cluster is a first-class citizen in the platform:
+Once registered, the cluster is a first-class citizen — same capabilities as platform-provisioned clusters:
 
 ```bash
 # Deploy applications
@@ -50,14 +56,24 @@ astroctl app apply -f app.yaml
 
 # Monitor cluster
 astroctl infra k8s get my-cluster
-
-# Connect cloud provider (optional, for upgrades/scaling)
-astroctl cloud aws connect --cluster-name my-cluster --account-id 123456789012 --region us-west-2
 ```
 
-## Web Console
+### Optional: Connect Cloud Provider
 
-You can also register clusters through the [Web Console](https://astropulse.io/console) UI.
+Cloud provider access is separate and optional. Only needed for operations like version upgrades and scaling:
+
+```bash
+# AWS
+astroctl cloud aws connect --account-id 123456789012 --cluster-name my-cluster --region us-west-2
+
+# GCP
+astroctl cloud gcp connect --project-id my-project --cluster-name my-cluster --region us-central1
+
+# Azure
+astroctl cloud azure connect --subscription-id <id> --resource-group <rg> --cluster-name my-cluster --region eastus
+```
+
+The platform generates a setup script you run in your cloud account. After that, credentials are auto-managed.
 
 ## Documentation
 

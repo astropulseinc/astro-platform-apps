@@ -4,8 +4,8 @@
 # Uses Azure federated identity for secure, keyless authentication.
 #
 # Prerequisites:
-# 1. Run: astroctl cloud azure connect --subscription-id <id> --cluster-name <name> --region <region>
-# 2. Complete the Azure setup in your subscription
+# 1. Run: astroctl cloud azure connect --subscription-id <id> --resource-group <rg> --cluster-name <name> --region <region>
+# 2. Run the generated setup script in your Azure subscription
 # 3. Wait for federated identity verification to complete
 #
 # Usage: astroctl infra k8s apply -f byoa.yaml
@@ -27,15 +27,8 @@ spec:
       # Azure Resource Group (required)
       resourceGroup: "rg-astro-production"
 
-      # Enable Workload Identity and OIDC Issuer (recommended)
-      enableWorkloadIdentity: true
-      enableOidcIssuer: true
-
-      # Network plugin (default: azure)
-      # Options: azure, kubenet
-      networkPlugin: azure
-
       # Dynamic credentials via federated identity (recommended)
+      # Platform auto-manages credentials after cloud connect setup
       credentials:
         type: dynamic
 
