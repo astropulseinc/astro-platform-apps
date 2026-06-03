@@ -1,37 +1,70 @@
-clusterName: eks-byo-vpc
-provider: aws
-region: us-west-2
-provisioner:
-  type: eks
-  eks:
-    accountId: <your account id>
-    vpcId: <your vpc id>
-    vpcCIDR: 192.168.0.0/16
-    subnets: 
-      us-west-2a: 
-        - type: public
-          id: subnet-0b9e119bdba3f8add
-        - type: private
-          id: subnet-09ad1a17f7ee64ded
-      us-west-2b:
-        - type: public
-          id: subnet-019c01369039cfb22
-        - type: private
-          id: subnet-0a40e1b1bb879d47c
-      us-west-2c:
-        - type: public
-          id: subnet-0be1c43d23931e8b7
-        - type: private
-          id: subnet-072d6cdf209a85b7f
-    credentials:
-      type: dynamic
-clusterSpec:
-  dataPlane:
-    nodeGroups:
-    - name: vpc-test-node-group
-      minNode: 1
-      maxNode: 3
-      machineTypes:
-      - t3.medium
-      labels:
-        hello: test
+# EKS Cluster with Bring Your Own VPC (BYOVPC)
+#
+# Use this when you have an existing VPC in your AWS account.
+# EKS requires per-zone subnets (public and/or private) in at least 2 AZs.
+#
+# Prerequisites:
+# 1. Existing VPC with subnets in multiple AZs
+# 2. Subnets must have appropriate tags for EKS:
+#    - Public subnets: kubernetes.io/role/elb=1
+#    - Private subnets: kubernetes.io/role/internal-elb=1
+#    - All subnets: kubernetes.io/cluster/<cluster-name>=shared
+# 3. Run: astroctl cloud aws connect --account-id <account> --cluster-name <name> --region <region>
+#
+# Usage: astroctl infra k8s apply -f byo-vpc.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: eks-byo-vpc
+  provider: aws
+  region: us-west-2
+  provisioner:
+    type: eks
+    eks:
+      # AWS Account ID (required, 12 digits)
+      accountId: <your account id>
+
+      # === BYOVPC Configuration ===
+      # VPC ID (required for BYOVPC)
+      vpcId: <your vpc id>
+
+      # VPC CIDR block
+      vpcCIDR: 192.168.0.0/16
+
+      # Subnets per availability zone (required for BYOVPC)
+      # EKS requires subnets in at least 2 AZs
+      # Provide both public and private subnets for production
+      subnets:
+        us-west-2a:
+          - type: public
+            id: subnet-0b9e119bdba3f8add
+          - type: private
+            id: subnet-09ad1a17f7ee64ded
+        us-west-2b:
+          - type: public
+            id: subnet-019c01369039cfb22
+          - type: private
+            id: subnet-0a40e1b1bb879d47c
+        us-west-2c:
+          - type: public
+            id: subnet-0be1c43d23931e8b7
+          - type: private
+            id: subnet-072d6cdf209a85b7f
+
+      # Dynamic credentials via IAM role assumption
+      credentials:
+        type: dynamic
+
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: vpc-test-node-group
+          minNode: 1
+          maxNode: 3
+          machineTypes:
+            - t3.medium
+          labels:
+            hello: test

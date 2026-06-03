@@ -1,30 +1,60 @@
-clusterName: v-gcp-cluster
-provider: gcp
-provisioner:
-  type: selfHosted
-  selfHosted:
-    # this is the gcp project id
-    accountId: gcp-project-410909
-    ## for byo vpc, enable this and make sure to configure on your cluster
-    # networkId:  vpc-018f2dec8bb5ddfdd
-    bucketName: <your bucket name>
-    credentials:
-      type: static
-      data:
-        GOOGLE_APPLICATION_CREDENTIALS: "/path/to/your/gcp/credentials"
-clusterSpec:
-  dataPlane:
-    nodeGroups:
-    - name: test-mg
-      minNode: 3
-      maxNode: 6
-      instanceType: spot
-      machineTypes:
-      - e2-medium
-      labels:
-        hello: "test"
-  controlPlane:
-    nodeGroup:
-      name: control-plane
-      machineTypes:
-      - e2-medium
+# GCP Self-Hosted Kubernetes Cluster
+#
+# Platform-managed Kubernetes on GCP Compute Engine instances (kOps-based).
+#
+# Two ways to set up credentials:
+#
+# Option 1 — Automated setup (recommended):
+#   astroctl cloud gcp selfHosted setup --project-id <id> --region <region> --cluster-name <name>
+#   Creates service account, GCS bucket, enables APIs.
+#   Credentials are auto-stored in the platform vault — no manual copy needed.
+#
+# Option 2 — Connect (check vault status or BYOC):
+#   astroctl cloud gcp selfHosted connect --cluster-name <name>
+#   - Without credentials: checks vault status (was setup already run?)
+#   - With --credentials: BYOC — validates and stores your service account key in vault
+#
+# After either option, your YAML uses credentials.type: vault (no keys in YAML).
+#
+# Usage: astroctl infra k8s apply -f gcp.yaml
+#
+# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted/gcp
+
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: v-gcp-cluster
+  provider: gcp
+  provisioner:
+    type: selfHosted
+    selfHosted:
+      # GCP Project ID (required)
+      # Get it with: gcloud config list --format="value(core.project)"
+      accountId: "<YOUR_GCP_PROJECT_ID>"
+
+      # GCS bucket for cluster state (from setup output)
+      bucketName: "<from-setup-output>"
+
+      # Optional: Bring Your Own VPC
+      # networkId: vpc-018f2dec8bb5ddfdd
+
+      # Vault credentials — setup or connect stores these automatically
+      credentials:
+        type: vault
+
+  clusterSpec:
+    controlPlane:
+      nodeGroup:
+        name: control-plane
+        machineTypes:
+          - e2-medium
+    dataPlane:
+      nodeGroups:
+        - name: worker-ng
+          minNode: 3
+          maxNode: 6
+          instanceType: spot
+          machineTypes:
+            - e2-medium
+          labels:
+            environment: production
