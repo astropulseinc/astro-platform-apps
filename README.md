@@ -1,6 +1,54 @@
 
 # Astro Platform Application Deployment Guide
 
+Astro Platform simplifies Kubernetes cluster management and application deployment across AWS, GCP, and Azure.
+
+## Getting Started
+
+> **Prefer a visual interface?** Use the [Astro Console](https://astropulse.io/console) for an intuitive UI experience to manage clusters and applications. The console provides the same capabilities with a user-friendly dashboard, real-time monitoring, and guided workflows.
+>
+> This guide is for developers who prefer the CLI approach.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- **Cloud Account**: AWS, GCP, or Azure account with appropriate permissions
+- **astroctl CLI**: Install with `curl -fsSL https://astropulse.io/install.sh | bash`
+- **kubectl**: For direct Kubernetes cluster access ([install guide](https://kubernetes.io/docs/tasks/tools/))
+
+## Quick Start
+
+```bash
+# 1. Install CLI
+curl -fsSL https://astropulse.io/install.sh | bash
+
+# 2. Login
+astroctl auth login
+
+# 3. Deploy a cluster (update accountId and region in the yaml first)
+astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
+
+# 4. Access the cluster
+astroctl infra k8s set-context <cluster-name>
+
+# 5. Deploy an application
+astroctl app apply -f apps/hello-world/demo.yaml
+
+# 6. Check status
+astroctl app status hello-world
+```
+
+## Cluster Templates
+
+| Provider | Template | Description |
+|----------|----------|-------------|
+| AWS | [cluster-template/aws/eks/byoa.yaml](cluster-template/aws/eks/byoa.yaml) | EKS with dynamic credentials |
+| AWS | [cluster-template/aws/eks/byo-vpc.yaml](cluster-template/aws/eks/byo-vpc.yaml) | EKS with existing VPC |
+| Azure | [cluster-template/azure/aks/byoa.yaml](cluster-template/azure/aks/byoa.yaml) | AKS with federated identity |
+| GCP | [cluster-template/gcp/gke/cluster.yaml](cluster-template/gcp/gke/cluster.yaml) | GKE with WIF |
+| GCP | [cluster-template/gcp/gke/autopilot.yaml](cluster-template/gcp/gke/autopilot.yaml) | GKE Autopilot |
+| BYOK | [cluster-template/byok/register.yaml](cluster-template/byok/register.yaml) | Register any existing cluster |
 
 ## Table of Contents
 1. [Download astroctl CLI](#download-astroctl-cli)
@@ -32,9 +80,7 @@
 
 ## Download astroctl CLI
 ```
-curl -L https://storage.googleapis.com/astroctl-cli/astroctl-$(go env GOOS).$(go env GOARCH).tar.gz | tar -xz
-chmod +x astroctl
-sudo mv astroctl /usr/local/bin
+curl -fsSL https://astropulse.io/install.sh | bash
 ```
 
 ## Generate API Key to Interact with Astro Platform
@@ -51,7 +97,7 @@ Note: Don't forget to update the `aws_eks_byoa.yaml` with your own `accountId` a
 
 To deploy a cluster, run:
 ```
- astroctl clusters apply -f cluster-template/aws/eks/byoa.yaml
+ astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
 ```
 
 > **Note:** Admin access to the EKS cluster is required to deploy the services. If you need access, please contact [AstroPulse support](mailto:contact@astropulse.io). After obtaining access, run `astroctl auth login` to log in to the Astro Platform. To verify admin access, run `astroctl whoami` and check the roles section for the `admin` role.
@@ -60,12 +106,12 @@ For different type of clusters, check the [documentations](https://astropulse.io
 
 ## Available Clusters and their State
 ```
-astroctl clusters get
+astroctl infra k8s get
 ```
 
 ## Access an existing cluster
 ```
-astroctl clusters set-context test-dev
+astroctl infra k8s set-context test-dev
 ```
 
 ## Deploy Application Profiles
@@ -76,7 +122,7 @@ astroctl clusters set-context test-dev
 To find the cluster names for your organization, run:
 
 ```
-astroctl clusters get 
+astroctl infra k8s get
 ```
 
 Then apply the application profile:
@@ -86,7 +132,7 @@ astroctl app profile apply -f app-profiles/
 
 ## Bring your own External Access (Optional)
 
-`Note: Skip this section if using an Astro-managed cluster, as external access is pre-configured for appliction which are using source type image`
+`Note: Skip this section if using an Astro-managed cluster, as external access is pre-configured for applications using source type image`
 
 This section is optional and covers setting up external access to your applications.
 
@@ -250,7 +296,7 @@ If external access is not configured, you can use port forwarding to access the 
 
 First you need to access the cluster:
 ```
-astroctl clusters set-context set-context
+astroctl infra k8s set-context <cluster-name>
 ```
 
 Then you can use port forwarding to access the application:
@@ -279,18 +325,18 @@ astroctl app get hello-world | grep clusterName
 ```
 2. Set the context with the retrieved `clusterName`:
 ```
-astroctl clusters set-context <clusterName>
+astroctl infra k8s set-context <clusterName>
 ```
 This will generate the kubeconfig and change the context. Now, you can run standard `kubectl` commands.
 
 To delete the kubeconfig for your cluster on your local machine:
 ```
-astroctl clusters delete-context <clusterName>
+astroctl infra k8s delete-context <clusterName>
 ```
 
 ## Deploying Services
 
-You can deploying any Cloud native services that works with Kubernetes and their interface is either via helm or yaml.
+You can deploy any cloud-native services that work with Kubernetes using either Helm or YAML.
 
 These examples showcase popular cloud-native services that assist in managing the application lifecycle. Please note that the platform does not automatically configure external access for applications when deploying via `helm` (helm repository), `repository` (helm from git repository), or `yaml`.
 
@@ -431,5 +477,5 @@ If you see any other errors, please check the [AstroPulse Support](mailto:contac
 
 - Any changes on the git will trigger a pipeline and takes upto 3 minutes to get deployed.
 - You can always use `kubectl` to get the logs and events for any application. Follow [Remote Kubernetes Access](#remote-kubernetes-access) to access the cluster.
-- For `private git repository`, you need to setup the authentication for the git repository on the astro platfrom. Please contact [AstroPulse Support](mailto:contact@astropulse.io) for more information on this. 
+- For `private git repository`, you need to setup the authentication for the git repository on the Astro Platform. Please contact [AstroPulse Support](mailto:contact@astropulse.io) for more information on this. 
    - In future releases, we will have automatic integration with private git repository via `astroctl app config set git.token <token> git.url=<https-url>`.
