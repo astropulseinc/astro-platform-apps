@@ -52,6 +52,7 @@ spec:
         - name: worker-ng
           minNode: 3
           maxNode: 6
+          instanceType: ondemand
           machineTypes:
             - t3.large
           labels:

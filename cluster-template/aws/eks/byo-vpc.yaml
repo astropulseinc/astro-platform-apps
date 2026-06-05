@@ -61,10 +61,11 @@ spec:
   clusterSpec:
     dataPlane:
       nodeGroups:
-        - name: vpc-test-node-group
+        - name: default-pool
           minNode: 1
           maxNode: 3
+          instanceType: ondemand  # or "spot" for cost savings
           machineTypes:
             - t3.medium
           labels:
-            hello: test
+            environment: production
