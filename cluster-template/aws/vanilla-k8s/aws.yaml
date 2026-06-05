@@ -1,21 +1,12 @@
 # AWS Self-Hosted Kubernetes Cluster
 #
-# Platform-managed Kubernetes on AWS EC2 instances.
-#
 # Setup:
 #   astroctl cloud aws selfHosted setup --account-id <id> --region <region> --cluster-name <name>
-#   This handles all resource provisioning automatically.
-#   Credentials are securely managed by the platform — no manual copy needed.
-#
 # Verify:
 #   astroctl cloud aws selfHosted connect --cluster-name <name>
-#   Checks that setup completed successfully.
-#
-# No keys in YAML — the platform manages credentials securely.
 #
 # Usage: astroctl infra k8s apply -f aws.yaml
-#
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted/aws
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted/aws
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
@@ -26,18 +17,11 @@ spec:
   provisioner:
     type: selfHosted
     selfHosted:
-      # AWS Account ID (required)
-      # Get it with: aws sts get-caller-identity --query Account --output text
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
-
-
-      # S3 bucket for cluster state (from setup output)
       bucketName: "<from-setup-output>"
 
-      # Optional: Bring Your Own VPC
-      # networkId: vpc-018f2dec8bb5ddfdd
+      # networkId: vpc-018f2dec8bb5ddfdd  # optional: bring your own VPC
 
-      # Credentials managed by the platform (no keys in YAML)
       credentials:
         type: vault
 

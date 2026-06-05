@@ -1,16 +1,10 @@
-# AKS Cluster - Production Configuration (Dynamic Credentials)
-#
-# This is the recommended approach for production AKS clusters.
-# Uses secure, keyless authentication — no static keys needed.
+# AKS Cluster (Dynamic Credentials)
 #
 # Prerequisites:
 # 1. Run: astroctl cloud azure connect --subscription-id <id> --resource-group <rg> --cluster-name <name> --region <region>
-# 2. Run the generated setup script in your Azure subscription
-# 3. Wait for verification to complete
 #
 # Usage: astroctl infra k8s apply -f byoa.yaml
-#
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
@@ -21,16 +15,9 @@ spec:
   provisioner:
     type: aks
     aks:
-      # Azure Subscription ID (required, UUID format)
-      # Get it with: az account show --query id --output tsv
       subscriptionId: "00000000-0000-0000-0000-000000000000"
-
-      # Azure Resource Group (required)
-      # List yours with: az group list --query "[].name" --output tsv
       resourceGroup: "rg-astro-production"
 
-      # Dynamic credentials (recommended)
-      # Platform auto-manages credentials after cloud connect setup
       credentials:
         type: dynamic
 
