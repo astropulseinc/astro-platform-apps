@@ -54,7 +54,7 @@ spec:
           - type: private
             id: subnet-072d6cdf209a85b7f
 
-      # Dynamic credentials via IAM role assumption
+      # Dynamic credentials
       credentials:
         type: dynamic
 

@@ -1,12 +1,12 @@
-# GKE Cluster - Production Configuration (Dynamic Credentials via WIF)
+# GKE Cluster - Production Configuration (Dynamic Credentials)
 #
 # This is the recommended approach for production GKE clusters.
-# Uses Workload Identity Federation (WIF) for secure, keyless authentication.
+# Uses secure, keyless authentication — no static keys needed.
 #
 # Prerequisites:
 # 1. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
-# 2. Complete the Cloud Shell setup script in your GCP project
-# 3. Wait for WIF verification to complete
+# 2. Follow the setup instructions (one-time)
+# 3. Wait for verification to complete
 #
 # Usage: astroctl infra k8s apply -f gke.yaml
 #
@@ -26,7 +26,7 @@ spec:
       # Must start with letter, end with letter or digit
       projectId: my-gcp-project-123
 
-      # Dynamic credentials via Workload Identity Federation (recommended)
+      # Dynamic credentials (recommended)
       credentials:
         type: dynamic
 

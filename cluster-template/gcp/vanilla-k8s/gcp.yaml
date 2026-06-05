@@ -1,20 +1,17 @@
 # GCP Self-Hosted Kubernetes Cluster
 #
-# Platform-managed Kubernetes on GCP Compute Engine instances (kOps-based).
+# Platform-managed Kubernetes on GCP Compute Engine instances.
 #
-# Two ways to set up credentials:
-#
-# Option 1 — Automated setup (recommended):
+# Setup:
 #   astroctl cloud gcp selfHosted setup --project-id <id> --region <region> --cluster-name <name>
-#   Creates service account, GCS bucket, enables APIs.
-#   Credentials are auto-stored in the platform vault — no manual copy needed.
+#   This handles all resource provisioning automatically.
+#   Credentials are securely managed by the platform — no manual copy needed.
 #
-# Option 2 — Connect (check vault status or BYOC):
+# Verify:
 #   astroctl cloud gcp selfHosted connect --cluster-name <name>
-#   - Without credentials: checks vault status (was setup already run?)
-#   - With --credentials: BYOC — validates and stores your service account key in vault
+#   Checks that setup completed successfully.
 #
-# After either option, your YAML uses credentials.type: vault (no keys in YAML).
+# No keys in YAML — the platform manages credentials securely.
 #
 # Usage: astroctl infra k8s apply -f gcp.yaml
 #
@@ -38,7 +35,7 @@ spec:
       # Optional: Bring Your Own VPC
       # networkId: vpc-018f2dec8bb5ddfdd
 
-      # Vault credentials — setup or connect stores these automatically
+      # Credentials managed by the platform (no keys in YAML)
       credentials:
         type: vault
 

@@ -15,15 +15,13 @@ Templates for deploying Kubernetes clusters on Google Cloud Platform.
 
 - Google manages the control plane
 - Automatic security updates and patches
-- Integrated with GCP services (IAM, Cloud Logging, etc.)
 - Options: Standard mode or Autopilot (fully managed)
 - Best for: Production workloads, teams wanting managed infrastructure
 
 ### Self-Hosted (Vanilla K8s)
 
 - Full control over control plane and nodes
-- Platform manages cluster lifecycle via kOps
-- Requires more operational expertise
+- Platform manages cluster lifecycle automatically
 - Best for: Specific compliance requirements, custom configurations
 
 ## Quick Start
@@ -31,7 +29,7 @@ Templates for deploying Kubernetes clusters on Google Cloud Platform.
 ### GKE Cluster
 
 ```bash
-# 1. Connect your GCP account (sets up Workload Identity Federation)
+# 1. Connect your GCP project
 astroctl cloud gcp connect \
   --project-id my-project-123 \
   --cluster-name my-cluster \
@@ -44,8 +42,11 @@ astroctl infra k8s apply -f gke/cluster.yaml
 ### Self-Hosted Cluster
 
 ```bash
-# 1. Create GCS bucket for state storage
-gsutil mb -l us-central1 gs://my-cluster-state
+# 1. Automated setup (handles all resource provisioning)
+astroctl cloud gcp selfHosted setup \
+  --project-id my-project-123 \
+  --region us-central1 \
+  --cluster-name my-cluster
 
 # 2. Deploy cluster
 astroctl infra k8s apply -f vanilla-k8s/gcp.yaml

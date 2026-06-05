@@ -91,7 +91,7 @@ spec:
       # Workload Identity for secure pod-to-GCP authentication (default: true)
       enableWorkloadIdentity: true
 
-      # Dynamic credentials via Workload Identity Federation
+      # Dynamic credentials
       credentials:
         type: dynamic
 

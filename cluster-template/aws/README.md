@@ -15,15 +15,13 @@ Templates for deploying Kubernetes clusters on Amazon Web Services.
 
 - AWS manages the control plane
 - Automatic security updates and patches
-- Integrated with AWS services (IAM, CloudWatch, etc.)
 - Karpenter enabled for intelligent node autoscaling
 - Best for: Production workloads, teams wanting managed infrastructure
 
 ### Self-Hosted (Vanilla K8s)
 
 - Full control over control plane and nodes
-- Platform manages cluster lifecycle via kOps
-- Requires more operational expertise
+- Platform manages cluster lifecycle automatically
 - Best for: Specific compliance requirements, custom configurations
 
 ## Quick Start
@@ -31,7 +29,7 @@ Templates for deploying Kubernetes clusters on Amazon Web Services.
 ### EKS Cluster
 
 ```bash
-# 1. Connect your AWS account (deploys CloudFormation stack)
+# 1. Connect your AWS account
 astroctl cloud aws connect \
   --account-id 123456789012 \
   --cluster-name my-cluster \
@@ -44,8 +42,11 @@ astroctl infra k8s apply -f eks/byoa.yaml
 ### Self-Hosted Cluster
 
 ```bash
-# 1. Create S3 bucket for state storage
-aws s3 mb s3://my-cluster-state --region us-east-1
+# 1. Automated setup (handles all resource provisioning)
+astroctl cloud aws selfHosted setup \
+  --account-id 123456789012 \
+  --region us-east-1 \
+  --cluster-name my-cluster
 
 # 2. Deploy cluster
 astroctl infra k8s apply -f vanilla-k8s/aws.yaml
