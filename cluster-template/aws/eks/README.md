@@ -13,7 +13,7 @@ astroctl cloud aws connect \
   --region <region>
 ```
 
-This deploys a CloudFormation stack for secure IAM role assumption.
+This grants the platform secure access to your AWS account.
 
 ## Templates
 
@@ -86,7 +86,7 @@ subnets:
 
 - **Karpenter**: Automatically enabled for intelligent node autoscaling
 - **Managed Node Groups**: AWS-managed node lifecycle
-- **IAM Roles for Service Accounts (IRSA)**: Secure pod-to-AWS authentication
+- **Pod-to-AWS Authentication**: Secure workload identity for pods
 
 ## Documentation
 

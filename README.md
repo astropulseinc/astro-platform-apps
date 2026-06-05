@@ -45,8 +45,8 @@ astroctl app status hello-world
 |----------|----------|-------------|
 | AWS | [cluster-template/aws/eks/byoa.yaml](cluster-template/aws/eks/byoa.yaml) | EKS with dynamic credentials |
 | AWS | [cluster-template/aws/eks/byo-vpc.yaml](cluster-template/aws/eks/byo-vpc.yaml) | EKS with existing VPC |
-| Azure | [cluster-template/azure/aks/byoa.yaml](cluster-template/azure/aks/byoa.yaml) | AKS with federated identity |
-| GCP | [cluster-template/gcp/gke/cluster.yaml](cluster-template/gcp/gke/cluster.yaml) | GKE with WIF |
+| Azure | [cluster-template/azure/aks/byoa.yaml](cluster-template/azure/aks/byoa.yaml) | AKS with dynamic credentials |
+| GCP | [cluster-template/gcp/gke/cluster.yaml](cluster-template/gcp/gke/cluster.yaml) | GKE with dynamic credentials |
 | GCP | [cluster-template/gcp/gke/autopilot.yaml](cluster-template/gcp/gke/autopilot.yaml) | GKE Autopilot |
 | BYOK | [cluster-template/byok/register.yaml](cluster-template/byok/register.yaml) | Register any existing cluster |
 
@@ -83,21 +83,24 @@ astroctl app status hello-world
 curl -fsSL https://astropulse.io/install.sh | bash
 ```
 
-## Generate API Key to Interact with Astro Platform
-To generate an API key:
+## Authenticate
+Log in with your organization credentials:
 ```
 astroctl auth login
 ```
 
 ## Deploy an EKS Cluster
 
-On this example, we will deploy a cluster on AWS EKS using a BYOA (Bring Your Own Account) method.
+First, connect your AWS account, then deploy the cluster.
 
-Note: Don't forget to update the `aws_eks_byoa.yaml` with your own `accountId` and `region`
+Note: Update the YAML with your own `accountId` and `region` before deploying.
 
-To deploy a cluster, run:
-```
- astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
+```bash
+# Connect your AWS account
+astroctl cloud aws connect --account-id <account-id> --cluster-name test-dev --region us-east-1
+
+# Deploy the cluster
+astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
 ```
 
 > **Note:** Admin access to the EKS cluster is required to deploy the services. If you need access, please contact [AstroPulse support](mailto:contact@astropulse.io). After obtaining access, run `astroctl auth login` to log in to the Astro Platform. To verify admin access, run `astroctl whoami` and check the roles section for the `admin` role.
