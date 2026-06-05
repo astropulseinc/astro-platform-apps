@@ -9,4 +9,4 @@ source:
 # only enable if you configure your cluster to have external access
 #  externalAccess:
 #    accessType: Ingress # this is default so not needed
-#    dnsName: "app.example.com"
+#    dnsEndpoint: "app.example.com"
