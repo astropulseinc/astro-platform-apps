@@ -13,7 +13,7 @@ astroctl cloud gcp connect \
   --region <region>
 ```
 
-This sets up Workload Identity Federation (WIF) for secure, keyless authentication.
+This grants the platform secure access to your GCP project.
 
 ## Templates
 

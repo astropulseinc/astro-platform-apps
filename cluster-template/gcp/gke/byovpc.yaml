@@ -1,33 +1,11 @@
 # GKE Cluster with Bring Your Own VPC (BYOVPC)
 #
-# Use this when you have an existing VPC network in your GCP project.
-# GKE uses REGIONAL subnets (not per-zone like EKS) - one subnet spans all zones.
-#
 # Prerequisites:
-# 1. Existing VPC network in your GCP project
-# 2. Regional subnet with secondary IP ranges for pods and services
-# 3. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
-#
-# Required GCP Subnet Setup (run in your GCP project):
-#
-#   # Create VPC (if not exists)
-#   gcloud compute networks create my-vpc \
-#     --subnet-mode=custom \
-#     --project=my-gcp-project-123
-#
-#   # Create subnet with secondary ranges
-#   gcloud compute networks subnets create gke-subnet \
-#     --network=my-vpc \
-#     --region=us-central1 \
-#     --range=10.0.0.0/20 \
-#     --secondary-range=pods=10.4.0.0/14 \
-#     --secondary-range=services=10.0.16.0/20 \
-#     --enable-private-ip-google-access \
-#     --project=my-gcp-project-123
+# 1. Existing VPC with a regional subnet and secondary IP ranges
+# 2. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
 #
 # Usage: astroctl infra k8s apply -f gke-byovpc.yaml
-#
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
@@ -38,60 +16,28 @@ spec:
   provisioner:
     type: gke
     gke:
-      # GCP Project ID (required)
-      # Format: 6-30 lowercase letters, digits, or hyphens
       projectId: my-gcp-project-123
 
-      # === BYOVPC Configuration ===
-      # VPC network name (required for BYOVPC)
-      # Format: 1-63 lowercase letters, digits, or hyphens
-      # Must start with letter, end with letter or digit
+      # BYOVPC — your existing VPC network name
       networkId: my-vpc
 
-      # Network CIDR for the VPC (optional, informational)
-      # networkCIDR: "10.0.0.0/16"
-
-      # Regional subnet configuration (required when networkId is provided)
-      # GKE uses a single regional subnet that spans all zones in the region
+      # Regional subnet with secondary ranges for pods and services
       subnet:
-        # Subnet name in your VPC
-        # Format: 1-63 lowercase letters, digits, or hyphens
         name: gke-subnet
+        podsRange: pods           # must match a secondary range on your subnet
+        servicesRange: services   # must match a secondary range on your subnet
 
-        # Secondary IP range name for pod IPs
-        # This must match a secondary range configured on your subnet
-        podsRange: pods
-
-        # Secondary IP range name for service IPs
-        # This must match a secondary range configured on your subnet
-        servicesRange: services
-
-      # === Control Plane Configuration ===
-      # Master CIDR for GKE control plane (optional)
-      # Requirements:
-      #   - Must be exactly /28 prefix (16 IPs)
-      #   - Must be in RFC 1918 private range
-      #   - Must not overlap with your VPC CIDR
-      # Default: 172.16.0.0/28
-      # Change if default conflicts with your network
+      # Control plane CIDR (must be /28, RFC 1918, no overlap with VPC)
       masterIPv4CidrBlock: "172.16.0.0/28"
 
-      # === API Access Control ===
-      # Authorized networks for Kubernetes API access (optional but recommended)
-      # CIDRs allowed to access the Kubernetes API server
-      # Maximum: 50 entries
-      # If not specified, defaults to RFC 1918 ranges
+      # API access control (max 50 CIDRs)
       authorizedNetworks:
-        - "10.0.0.0/8"        # RFC 1918 Class A
-        - "172.16.0.0/12"     # RFC 1918 Class B
-        - "192.168.0.0/16"    # RFC 1918 Class C
-        # - "203.0.113.5/32"  # Single IP (e.g., specific admin machine)
+        - "10.0.0.0/8"
+        - "172.16.0.0/12"
+        - "192.168.0.0/16"
 
-      # === Security Features ===
-      # Workload Identity for secure pod-to-GCP authentication (default: true)
       enableWorkloadIdentity: true
 
-      # Dynamic credentials via Workload Identity Federation
       credentials:
         type: dynamic
 
@@ -106,7 +52,6 @@ spec:
             - e2-standard-4
           labels:
             tier: application
-            environment: production
 
         - name: system-pool
           minNode: 1

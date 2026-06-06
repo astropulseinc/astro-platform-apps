@@ -1,16 +1,10 @@
-# GKE Cluster - Production Configuration (Dynamic Credentials via WIF)
-#
-# This is the recommended approach for production GKE clusters.
-# Uses Workload Identity Federation (WIF) for secure, keyless authentication.
+# GKE Cluster (Dynamic Credentials)
 #
 # Prerequisites:
 # 1. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
-# 2. Complete the Cloud Shell setup script in your GCP project
-# 3. Wait for WIF verification to complete
 #
 # Usage: astroctl infra k8s apply -f gke.yaml
-#
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
@@ -21,25 +15,14 @@ spec:
   provisioner:
     type: gke
     gke:
-      # GCP Project ID (required)
-      # Format: 6-30 lowercase letters, digits, or hyphens
-      # Must start with letter, end with letter or digit
       projectId: my-gcp-project-123
 
-      # Dynamic credentials via Workload Identity Federation (recommended)
       credentials:
         type: dynamic
 
-      # Optional: Kubernetes version (defaults to GKE's stable channel default)
-      # kubernetesVersion: "1.30"
-
-      # Optional: Release channel (default: STABLE)
-      # Options: STABLE, REGULAR, RAPID
-      # releaseChannel: STABLE
-
-      # Optional: Enable Workload Identity for pods (default: true)
-      # Allows pods to authenticate to GCP services without keys
-      # enableWorkloadIdentity: true
+      # kubernetesVersion: "1.30"         # defaults to GKE stable channel
+      # releaseChannel: STABLE             # STABLE, REGULAR, RAPID
+      # enableWorkloadIdentity: true       # default: true
 
   clusterSpec:
     dataPlane:

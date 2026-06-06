@@ -8,7 +8,7 @@ Templates for deploying Kubernetes clusters on Azure using Astro Platform.
 
 | Template | Description |
 |----------|-------------|
-| [aks/byoa.yaml](aks/byoa.yaml) | AKS cluster with dynamic credentials via federated identity (recommended) |
+| [aks/byoa.yaml](aks/byoa.yaml) | AKS cluster with dynamic credentials (recommended) |
 
 ## Prerequisites
 
@@ -41,9 +41,9 @@ astroctl infra k8s set-context my-aks-cluster
 ## How It Works
 
 1. `cloud azure connect` generates a setup script for your Azure subscription
-2. You run the setup script — this creates the federated identity trust
-3. The platform auto-manages credentials from that point (dynamic, keyless)
-4. `infra k8s apply` provisions the AKS cluster using the trust relationship
+2. You run the setup script in your Azure subscription (one-time)
+3. The platform auto-manages credentials from that point (secure, keyless)
+4. `infra k8s apply` provisions the AKS cluster
 
 ## Documentation
 
