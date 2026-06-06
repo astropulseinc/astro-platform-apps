@@ -24,12 +24,13 @@ spec:
   clusterSpec:
     dataPlane:
       nodeGroups:
+        # The first nodeGroup is always the system pool. The name can be anything.
         - name: systempool
           minNode: 2
           maxNode: 5
-          instanceType: ondemand  # or "spot" for cost savings
+          instanceType: ondemand  # system pools cannot use spot — AKS requires ondemand
           machineTypes:
-            - Standard_DC2as_v5
+            - Standard_D2s_v7    # use az vm list-skus to check your subscription's allowed sizes
           labels:
             environment: production
             tier: application
