@@ -1,59 +1,32 @@
-# EKS Cluster Update Configuration
-#
-# Use this to update an existing EKS cluster's configuration.
+# EKS Cluster Update
 #
 # Usage: astroctl infra k8s update <cluster-name> -f eks-update.yaml
-#
-# What can be updated:
-# - Node group scaling (minNode, maxNode)
-# - Node group machine types (requires node replacement)
-# - Kubernetes version (within supported upgrade path)
-# - AMI family for nodes
-# - Cluster tags
-#
-# Note: Karpenter is automatically enabled for EKS clusters for autoscaling.
-#
-# Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterUpdate
 spec:
-  # === Kubernetes Version Upgrade ===
-  # Optional: Upgrade to a new Kubernetes version
-  # Must be a supported version and valid upgrade path
+  # Optional: K8s version upgrade (must be valid upgrade path)
   # kubernetesVersion: "1.30"
 
-  # === Node Group Updates ===
-  # Scale existing node groups or update machine types
   nodeGroups:
     - name: default-pool
       minNode: 2
       maxNode: 10
-      # Optional: Update machine types (requires node replacement)
-      # machineTypes:
+      # machineTypes:        # update triggers node replacement
       #   - t3.large
       labels:
         environment: production
         updated: "true"
 
-  # === EKS-Specific Settings ===
   # eks:
-    # AMI family for new/replaced nodes
-    # Options: AL2023 (default), AL2, Bottlerocket, Ubuntu
-    # amiFamily: AL2023
+  #   amiFamily: AL2023   # AL2023 (default), AL2, Bottlerocket, Ubuntu
 
-  # === Rolling Update Strategy ===
-  # Controls how nodes are updated
   updateConfig:
-    # Max nodes that can be unavailable during update
     maxUnavailable: "1"
-    # Max additional nodes that can be created during update
     maxSurge: "1"
-    # Set to true to validate without applying changes (dry run)
     dryRun: false
 
-  # === Cluster Tags ===
-  # Update cluster-level tags (AWS resource tags)
   tags:
     environment: production
     team: platform
