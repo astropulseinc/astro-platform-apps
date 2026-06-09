@@ -1,18 +1,21 @@
-name: prometheus
-profileName: profile3
-namespace: monitoring
-source:
-  type: helm
-  helm: 
-    repo: 
-      repoURL: https://prometheus-community.github.io/helm-charts
-      chartVersion: 25.27.0
-      chartName: prometheus
-    # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus/values.yaml
-    values:
-     type: object
-     object:
-       alertmanager:
-         enabled: false
-       prometheus-pushgateway:
-         enabled: false
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: prometheus
+  profileName: profile3
+  namespace: monitoring
+  source:
+    type: helm
+    helm: 
+      repo: 
+        repoURL: https://prometheus-community.github.io/helm-charts
+        chartVersion: 25.27.0
+        chartName: prometheus
+      # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus/values.yaml
+      values:
+       type: object
+       object:
+         alertmanager:
+           enabled: false
+         prometheus-pushgateway:
+           enabled: false

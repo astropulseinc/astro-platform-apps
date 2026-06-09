@@ -15,13 +15,16 @@
 #
 # Documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-registration
 
-# Name for the cluster in the platform (required)
-clusterName: my-existing-cluster
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterRegistration
+spec:
+  # Name for the cluster in the platform (required)
+  clusterName: my-existing-cluster
 
-# Cloud region override (optional — auto-detected if omitted)
-# region: us-east-1
+  # Cloud region override (optional — auto-detected if omitted)
+  # region: us-east-1
 
-# Labels for organization and filtering (optional)
-# labels:
-#   environment: production
-#   team: platform
+  # Labels for organization and filtering (optional)
+  # labels:
+  #   environment: production
+  #   team: platform
