@@ -4,5 +4,8 @@
 #   astroctl infra k8s get
 #
 # Usage: astroctl app profile apply -f profile3.yaml
-profileName: profile3
-clusterName: <YOUR_CLUSTER_NAME>
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: profile3
+  clusterName: <YOUR_CLUSTER_NAME>

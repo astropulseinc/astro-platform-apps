@@ -1,15 +1,17 @@
-name: cert-manager
-profileName: profile3
-namespace: cert-manager
-source:
-  type: helm
-  helm: 
-    repo: 
-      repoURL: https://charts.jetstack.io
-      chartVersion: v1.14.5
-      chartName: cert-manager
-    values:
-     type: object
-     object:
-       installCRDs: true
-
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: cert-manager
+  profileName: profile3
+  namespace: cert-manager
+  source:
+    type: helm
+    helm: 
+      repo: 
+        repoURL: https://charts.jetstack.io
+        chartVersion: v1.14.5
+        chartName: cert-manager
+      values:
+       type: object
+       object:
+         installCRDs: true

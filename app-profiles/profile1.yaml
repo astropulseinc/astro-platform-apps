@@ -1,6 +1,9 @@
-# This profile is used to select the GCP region
-# The platform will select the cluster based on the region and provider
-profileName: profile1
-cloudProvider:
-  provider: aws # gcp 
-  region: us-west-2
+# Profile pinned to a specific cloud provider and region.
+# The platform will select the best cluster in that provider/region.
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: profile1
+  cloudProvider:
+    provider: aws # gcp
+    region: us-west-2
