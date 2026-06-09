@@ -9,7 +9,7 @@
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
-  clusterName: test-dev
+  clusterName: my-eks-cluster
   provider: aws
   region: us-east-1
   provisioner:
