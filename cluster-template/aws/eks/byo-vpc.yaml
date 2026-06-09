@@ -16,28 +16,29 @@ spec:
   provisioner:
     type: eks
     eks:
-      accountId: <your account id>
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"   # 12-digit AWS account ID
 
-      vpcId: <your vpc id>
-      vpcCIDR: 192.168.0.0/16
+      vpcId: "<YOUR_VPC_ID>"              # e.g. vpc-0abc1234def56789a
+      vpcCIDR: "10.0.0.0/16"             # must match your VPC CIDR block
 
-      # Subnets per AZ (public + private recommended for production)
+      # Subnets per AZ (public + private required for production)
+      # Replace all subnet-* values with your actual subnet IDs
       subnets:
         us-west-2a:
           - type: public
-            id: subnet-0123456789abcdef3
+            id: "<YOUR_PUBLIC_SUBNET_2A>"   # e.g. subnet-0abc1234def56789a
           - type: private
-            id: subnet-0123456789abcdef5
+            id: "<YOUR_PRIVATE_SUBNET_2A>"
         us-west-2b:
           - type: public
-            id: subnet-0123456789abcdef6
+            id: "<YOUR_PUBLIC_SUBNET_2B>"
           - type: private
-            id: subnet-0123456789abcdef4
+            id: "<YOUR_PRIVATE_SUBNET_2B>"
         us-west-2c:
           - type: public
-            id: subnet-0123456789abcdef2
+            id: "<YOUR_PUBLIC_SUBNET_2C>"
           - type: private
-            id: subnet-0123456789abcdef1
+            id: "<YOUR_PRIVATE_SUBNET_2C>"
 
       credentials:
         type: dynamic

@@ -1,7 +1,12 @@
 # AKS Cluster (Dynamic Credentials)
 #
 # Prerequisites:
-# 1. Run: astroctl cloud azure connect --subscription-id <id> --resource-group <rg> --cluster-name <name> --region <region>
+# 1. Find your Azure subscription ID:
+#      az account show --query id -o tsv
+# 2. Create a resource group (if needed):
+#      az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
+# 3. Run: astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#    Then run the saved script: bash astro-azure-setup-<YOUR_CLUSTER_NAME>.sh
 #
 # Usage: astroctl infra k8s apply -f byoa.yaml
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
@@ -9,14 +14,19 @@
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
-  clusterName: my-aks-cluster
+  clusterName: <YOUR_CLUSTER_NAME>
   provider: azure
-  region: eastus
+  region: <YOUR_REGION>          # e.g. eastus — must match the region used in step 3 above
   provisioner:
     type: aks
     aks:
-      subscriptionId: "00000000-0000-0000-0000-000000000000"
-      resourceGroup: "rg-astro-production"
+      # Azure subscription ID (UUID format)
+      # Find with: az account show --query id -o tsv
+      subscriptionId: "<YOUR_SUBSCRIPTION_ID>"
+
+      # Azure resource group where the cluster will be created
+      # Create with: az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
+      resourceGroup: "<YOUR_RESOURCE_GROUP>"
 
       credentials:
         type: dynamic
@@ -25,12 +35,14 @@ spec:
     dataPlane:
       nodeGroups:
         # The first nodeGroup is always the system pool. The name can be anything.
+        # System pools must use ondemand — Azure does not allow spot for system pools.
         - name: systempool
           minNode: 2
           maxNode: 5
-          instanceType: ondemand  # system pools cannot use spot — AKS requires ondemand
+          instanceType: ondemand  # required for system pools — do not change to spot
           machineTypes:
-            - Standard_D2s_v7    # use az vm list-skus to check your subscription's allowed sizes
+            # Check available VM sizes for your subscription and region:
+            #   az vm list-skus --location <YOUR_REGION> --resource-type virtualMachines -o table
+            - Standard_D2s_v7
           labels:
-            environment: production
-            tier: application
+            environment: dev

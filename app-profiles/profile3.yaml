@@ -1,3 +1,8 @@
-# This profile pre-defines the cluster to be used for the application
+# Cluster-pinned profile — targets a specific cluster by name.
+#
+# Replace <YOUR_CLUSTER_NAME> with the name of a cluster visible in:
+#   astroctl infra k8s get
+#
+# Usage: astroctl app profile apply -f profile3.yaml
 profileName: profile3
-clusterName: test-dev
+clusterName: <YOUR_CLUSTER_NAME>
