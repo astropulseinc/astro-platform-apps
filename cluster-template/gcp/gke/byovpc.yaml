@@ -16,7 +16,7 @@ spec:
   provisioner:
     type: gke
     gke:
-      projectId: my-gcp-project-123
+      projectId: "<YOUR_GCP_PROJECT_ID>"   # e.g. my-project-123456
 
       # BYOVPC — your existing VPC network name
       networkId: my-vpc

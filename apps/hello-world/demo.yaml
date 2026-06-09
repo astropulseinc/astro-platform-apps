@@ -1,12 +1,29 @@
-name: hello-world
-profileName: profile3
-source:
- type: image
- image:
-   registry: docker.io
-   repository: astropulse/latency
-   tag: v1.0.0
-# only enable if you configure your cluster to have external access
-#  externalAccess:
-#    accessType: Ingress # this is default so not needed
-#    dnsEndpoint: "app.example.com"
+# Hello World Application
+#
+# Prerequisites:
+# 1. A cluster must exist and be READY: astroctl infra k8s get
+# 2. A profile must exist that points at your cluster.
+#    Create one: astroctl app profile apply -f profile.yaml
+#    where profile.yaml contains:
+#      profileName: <YOUR_PROFILE_NAME>
+#      clusterName: <YOUR_CLUSTER_NAME>
+#
+# Usage: astroctl app apply -f demo.yaml
+# Verify: astroctl app status hello-world
+
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: hello-world
+  # Must match an existing profile — list profiles with: astroctl app profile get
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: image
+    image:
+      registry: docker.io
+      repository: astropulse/latency
+      tag: v1.0.0
+  # Uncomment to expose the app via an ingress (requires external access configured on cluster):
+  # externalAccess:
+  #   accessType: Ingress
+  #   dnsEndpoint: "hello-world.example.com"

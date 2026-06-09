@@ -19,23 +19,40 @@ Before you begin, ensure you have:
 
 ## Quick Start
 
+**Option A — Provision a new cluster (AWS EKS)**
 ```bash
-# 1. Install CLI
+# 1. Install CLI + login
 curl -fsSL https://astropulse.io/install.sh | bash
-
-# 2. Login
 astroctl auth login
 
-# 3. Deploy a cluster (update accountId and region in the yaml first)
+# 2. Link your AWS account (one-time per cluster)
+astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name my-cluster --region us-east-1
+
+# 3. Deploy cluster (update accountId and region in the yaml first)
 astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
 
-# 4. Access the cluster
-astroctl infra k8s set-context <cluster-name>
-
-# 5. Deploy an application
+# 4. Access and deploy
+astroctl infra k8s set-context my-cluster
 astroctl app apply -f apps/hello-world/demo.yaml
+astroctl app status hello-world
+```
 
-# 6. Check status
+**Option B — Register an existing cluster (any provider)**
+```bash
+# 1. Install CLI + login
+curl -fsSL https://astropulse.io/install.sh | bash
+astroctl auth login
+
+# 2. Register (deploys a lightweight agent via your current kubectl context)
+astroctl infra k8s register --cluster-name my-cluster
+
+# 3. (Optional) Link cloud provider for upgrade/scale/delete operations
+#    AWS:   astroctl cloud aws connect --account-id <ID> --cluster-name my-cluster --region <region>
+#    GCP:   astroctl cloud gcp connect --project-id <PROJECT> --cluster-name my-cluster --region <region>
+#    Azure: astroctl cloud azure connect --subscription-id <ID> --resource-group <RG> --cluster-name my-cluster --region <region>
+
+# 4. Deploy
+astroctl app apply -f apps/hello-world/demo.yaml
 astroctl app status hello-world
 ```
 
@@ -54,8 +71,9 @@ astroctl app status hello-world
 1. [Download astroctl CLI](#download-astroctl-cli)
 2. [Generate API Key](#generate-api-key-to-interact-with-astro-platform)
 3. [Deploy an EKS Cluster](#deploy-an-eks-cluster)
-4. [Manage Clusters](#available-clusters-and-their-state)
-5. [Deploy Application Profiles](#deploy-application-profiles)
+4. [Register an Existing Cluster (BYOK)](#register-an-existing-cluster-byok)
+5. [Manage Clusters](#available-clusters-and-their-state)
+6. [Deploy Application Profiles](#deploy-application-profiles)
 6. [External Access Setup (Optional)](#bring-your-own-external-access-optional)
    - [Kubernetes NGINX Ingress Controller](#kubernetes-nginx-ingress-controller)
    - [TLS Certificate](#tls-certificate)
@@ -91,21 +109,62 @@ astroctl auth login
 
 ## Deploy an EKS Cluster
 
-First, connect your AWS account, then deploy the cluster.
-
-Note: Update the YAML with your own `accountId` and `region` before deploying.
+First, link your AWS account, then deploy the cluster.
 
 ```bash
-# Connect your AWS account
-astroctl cloud aws connect --account-id <account-id> --cluster-name test-dev --region us-east-1
+# Step 1 — link your AWS account (one-time per cluster)
+# Find your account ID: aws sts get-caller-identity --query Account --output text
+astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name my-cluster --region us-east-1
 
-# Deploy the cluster
+# Step 2 — deploy (update accountId and region in the YAML first)
 astroctl infra k8s apply -f cluster-template/aws/eks/byoa.yaml
 ```
 
-> **Note:** Admin access to the EKS cluster is required to deploy the services. If you need access, please contact [AstroPulse support](mailto:contact@astropulse.io). After obtaining access, run `astroctl auth login` to log in to the Astro Platform. To verify admin access, run `astroctl whoami` and check the roles section for the `admin` role.
+For GKE or AKS clusters, use the equivalent connect command:
+```bash
+# GKE: find project ID with: gcloud config get-value project
+astroctl cloud gcp connect --project-id <GCP_PROJECT_ID> --cluster-name my-cluster --region us-central1
+astroctl infra k8s apply -f cluster-template/gcp/gke/cluster.yaml
 
-For different type of clusters, check the [documentations](https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-mgmt)
+# AKS: find subscription ID with: az account show --query id --output tsv
+astroctl cloud azure connect --subscription-id <SUBSCRIPTION_ID> --resource-group <RESOURCE_GROUP> --cluster-name my-cluster --region eastus
+astroctl infra k8s apply -f cluster-template/azure/aks/byoa.yaml
+```
+
+For different cluster types, see the [documentation](https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-mgmt).
+
+## Register an Existing Cluster (BYOK)
+
+Already have a Kubernetes cluster on AWS, GCP, Azure, or on-premises? Register it without reprovisioning.
+
+```bash
+# Register using your current kubectl context
+astroctl infra k8s register --cluster-name my-cluster
+
+# Or using a specific kubeconfig/context
+astroctl infra k8s register --cluster-name my-cluster --kubeconfig ~/.kube/config --context my-context
+```
+
+A lightweight agent is deployed to your cluster that creates a secure outbound tunnel to the platform. No firewall rules required.
+
+### Link Your Cloud Provider (Optional)
+
+Cloud provider access is **optional** and only needed for platform-managed operations like version upgrades, node scaling, and deletion of cloud resources. Connect it any time after registration:
+
+```bash
+# AWS — find your account ID: aws sts get-caller-identity --query Account --output text
+astroctl cloud aws connect --account-id <AWS_ACCOUNT_ID> --cluster-name my-cluster --region <REGION>
+
+# GCP — find your project ID: gcloud config get-value project
+astroctl cloud gcp connect --project-id <GCP_PROJECT_ID> --cluster-name my-cluster --region <REGION>
+
+# Azure — find your subscription ID: az account show --query id --output tsv
+astroctl cloud azure connect --subscription-id <SUBSCRIPTION_ID> --resource-group <RESOURCE_GROUP> --cluster-name my-cluster --region <REGION>
+```
+
+Each `cloud connect` command generates a setup script and either opens it in your cloud's shell (GCP Cloud Shell) or saves it locally (AWS CloudFormation, Azure CLI script). Run it once — the platform then manages credentials automatically.
+
+See [cluster-template/byok/](cluster-template/byok/) for full details and YAML examples.
 
 ## Available Clusters and their State
 ```
