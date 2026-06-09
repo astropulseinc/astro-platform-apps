@@ -1,28 +1,36 @@
 # GKE Cluster (Dynamic Credentials)
 #
 # Prerequisites:
-# 1. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
+# 1. Find your GCP project ID:
+#      gcloud config get-value project
+# 2. Enable the GKE API (once per project):
+#      gcloud services enable container.googleapis.com --project <YOUR_GCP_PROJECT_ID>
+# 3. Run: astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
-# Usage: astroctl infra k8s apply -f gke.yaml
+# Usage: astroctl infra k8s apply -f cluster.yaml
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
 
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
-  clusterName: my-gke-cluster
+  clusterName: <YOUR_CLUSTER_NAME>
   provider: gcp
-  region: us-central1
+  region: <YOUR_REGION>          # e.g. us-central1 — must match the region used in step 3 above
   provisioner:
     type: gke
     gke:
-      projectId: my-gcp-project-123
+      # GCP project ID (not project number)
+      # Find with: gcloud config get-value project
+      projectId: "<YOUR_GCP_PROJECT_ID>"   # e.g. my-project-123456
 
       credentials:
         type: dynamic
 
-      # kubernetesVersion: "1.30"         # defaults to GKE stable channel
-      # releaseChannel: STABLE             # STABLE, REGULAR, RAPID
-      # enableWorkloadIdentity: true       # default: true
+      # kubernetesVersion: "1.30.5-gke.1443001"  # GKE version format; omit to use channel default
+      # releaseChannel: STABLE                    # STABLE (default), REGULAR, RAPID
+      # enableWorkloadIdentity: true              # default: true — enables pod-level GCP IAM
+      # Fleet enrollment is automatic — the platform registers the cluster in GCP Fleet Hub
+      # during creation to enable Connect Gateway. No manual steps required.
 
   clusterSpec:
     dataPlane:
@@ -34,5 +42,4 @@ spec:
           machineTypes:
             - e2-standard-2
           labels:
-            environment: production
-            tier: application
+            environment: dev

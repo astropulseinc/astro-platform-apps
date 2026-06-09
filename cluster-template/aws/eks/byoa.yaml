@@ -1,7 +1,9 @@
 # EKS Cluster (Dynamic Credentials)
 #
 # Prerequisites:
-# 1. Run: astroctl cloud aws connect --account-id <account> --cluster-name <name> --region <region>
+# 1. Find your AWS account ID:
+#      aws sts get-caller-identity --query Account --output text
+# 2. Run: astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
 # Usage: astroctl infra k8s apply -f byoa.yaml
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
@@ -9,13 +11,15 @@
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
-  clusterName: test-dev
+  clusterName: <YOUR_CLUSTER_NAME>
   provider: aws
-  region: us-east-1
+  region: <YOUR_REGION>          # e.g. us-east-1 — must match the region used in step 2 above
   provisioner:
     type: eks
     eks:
-      accountId: <your account id>
+      # 12-digit AWS account ID
+      # Find with: aws sts get-caller-identity --query Account --output text
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
 
       credentials:
         type: dynamic
