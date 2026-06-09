@@ -34,7 +34,8 @@ spec:
   clusterSpec:
     dataPlane:
       nodeGroups:
-        # The first nodeGroup is always the system pool. The name can be anything.
+        # The first nodeGroup is always the system pool. AKS node pool names must start with a
+        # lowercase letter, contain only lowercase alphanumeric characters, and be ≤12 chars (Linux).
         # System pools must use ondemand — Azure does not allow spot for system pools.
         - name: systempool
           minNode: 2
