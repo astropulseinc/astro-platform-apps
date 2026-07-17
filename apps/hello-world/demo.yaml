@@ -23,7 +23,8 @@ spec:
       registry: docker.io
       repository: astropulse/latency
       tag: v1.0.0
-  # Uncomment to expose the app via an ingress (requires external access configured on cluster):
+  # Uncomment to expose the app on a VERIFIED custom domain
+  # (requires an ingress controller + DNS on the cluster — see the Custom Domains guide):
   # externalAccess:
-  #   accessType: Ingress
-  #   dnsEndpoint: "hello-world.example.com"
+  #   domain: example.com                 # auto-generated → hello-world-<id>.example.com
+  #   # hostname: hello-world.example.com # OR serve at exactly this hostname
