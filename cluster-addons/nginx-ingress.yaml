@@ -1,0 +1,30 @@
+# NGINX Ingress — managed cluster add-on
+#
+# Apply with:  astroctl infra k8s addons apply -f nginx-ingress.yaml
+#
+# Defaults: 1 replica, ingress class "nginx", cloud LoadBalancer service, and
+# TLS terminated at the controller (attach a TLS Secret to each Ingress; pair
+# with cert-manager to automate certificates). Installs into the `ingress-nginx`
+# namespace.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: nginx-ingress
+spec:
+  clusterName: production        # your cluster
+  # version: 4.12.3              # optional — omit to use the platform default
+  configuration:
+    nginx:
+      replicas: 2
+      ingressClassName: nginx
+      # For clusters without a cloud load balancer (local / bare-metal),
+      # expose the controller via NodePort instead:
+      enableNodePort: false
+      autoScaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 5
+        targetCPUPercent: 80
+  options:
+    waitForReady: true
+    timeout: 10m

@@ -1,0 +1,24 @@
+# cert-manager — managed cluster add-on
+#
+# Apply with:  astroctl infra k8s addons apply -f cert-manager.yaml
+#
+# Defaults: installs the cert-manager CRDs (installCRDs: true) into the
+# `cert-manager` namespace. It does NOT create a ClusterIssuer for you — either
+# define your own Issuer/ClusterIssuer, or set enableClusterIssuer below to have
+# the add-on create a Let's Encrypt ACME ClusterIssuer.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cert-manager
+spec:
+  clusterName: production
+  configuration:
+    certManager:
+      installCRDs: true          # set false only if the CRDs already exist
+      # Optional: have the add-on create a Let's Encrypt ClusterIssuer:
+      enableClusterIssuer: false
+      issuerType: acme
+      email: platform@example.com
+  options:
+    waitForReady: true
+    timeout: 10m
