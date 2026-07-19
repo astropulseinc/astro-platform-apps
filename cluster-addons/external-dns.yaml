@@ -1,0 +1,32 @@
+# ExternalDNS — managed cluster add-on
+#
+# Apply with:  astroctl infra k8s addons apply -f external-dns.yaml
+#
+# PREREQUISITE — cluster-side DNS identity (required):
+#   The managed add-on authenticates ONLY with the cluster's own cloud identity
+#   (IRSA on AWS, Workload Identity on GCP/Azure) — it has no credential fields
+#   and AstroPulse never stores DNS credentials. Grant DNS permission to the
+#   `external-dns` service account in the `external-dns` namespace before it can
+#   create records. See:
+#   https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons#externaldns-dns-automation
+#
+#   Need to authenticate with a static key/Secret instead? Don't use this add-on
+#   — deploy ExternalDNS as a regular Application (see ../apps/external-dns/).
+#
+# Defaults: watches Ingresses + Services, policy=sync (creates AND deletes
+# records to match the cluster), TXT registry owned by the cluster name.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: external-dns
+spec:
+  clusterName: production
+  configuration:
+    externalDns:
+      provider: aws              # aws | gcp | azure (defaults to the cluster cloud)
+      domainFilter: example.com  # exact zone/domain suffix — NOT a regex
+      # txtOwnerId: production   # optional — defaults to the cluster name
+      # dryRun: true             # optional — log intended records, write nothing
+  options:
+    waitForReady: true
+    timeout: 10m
