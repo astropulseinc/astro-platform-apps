@@ -3,22 +3,45 @@
 # Apply with:  astroctl infra k8s addons apply -f cert-manager.yaml
 #
 # Defaults: installs the cert-manager CRDs (installCRDs: true) into the
-# `cert-manager` namespace. It does NOT create a ClusterIssuer for you — either
-# define your own Issuer/ClusterIssuer, or set enableClusterIssuer below to have
-# the add-on create a Let's Encrypt ACME ClusterIssuer.
+# `cert-manager` namespace. By default it does NOT create a ClusterIssuer — you
+# define your own Issuer/ClusterIssuer. Set enableClusterIssuer: true to have
+# the add-on create one for you (see the variants below).
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterAddon
 metadata:
   name: cert-manager
 spec:
   clusterName: production
+  # version: v1.21.0             # optional — omit to use the platform default
   configuration:
     certManager:
       installCRDs: true          # set false only if the CRDs already exist
-      # Optional: have the add-on create a Let's Encrypt ClusterIssuer:
+      # No ClusterIssuer by default. Omit issuerType/email entirely unless
+      # enableClusterIssuer is true (the platform rejects them otherwise).
       enableClusterIssuer: false
-      issuerType: acme
-      email: platform@example.com
   options:
     waitForReady: true
     timeout: 10m
+#
+# ── Variant: automatic public HTTPS (Let's Encrypt ACME) ──────────────────────
+# Creates a ClusterIssuer named `astro-letsencrypt` that solves ACME HTTP-01
+# challenges through the `nginx` ingress class — install NGINX + ExternalDNS too
+# and a new app gets a trusted cert automatically (see the automatic-HTTPS recipe
+# in the docs). email is REQUIRED for Let's Encrypt.
+#
+#   configuration:
+#     certManager:
+#       installCRDs: true
+#       enableClusterIssuer: true
+#       issuerType: letsencrypt
+#       email: platform@example.com
+#
+# ── Variant: self-signed issuer (internal / testing, works in kind) ───────────
+# Creates a ClusterIssuer named `astro-selfsigned` — no ACME account, no public
+# DNS, no email. Ideal for local/kind validation.
+#
+#   configuration:
+#     certManager:
+#       installCRDs: true
+#       enableClusterIssuer: true
+#       issuerType: selfsigned
