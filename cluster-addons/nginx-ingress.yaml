@@ -1,0 +1,42 @@
+# NGINX Ingress — managed cluster add-on
+#
+# Apply with:  astroctl infra k8s addons apply -f nginx-ingress.yaml
+#
+# Defaults: 1 replica, ingress class "nginx", cloud LoadBalancer service, and
+# TLS terminated at the controller (attach a TLS Secret to each Ingress; pair
+# with cert-manager to automate certificates). Installs into the `ingress-nginx`
+# namespace. The platform applies provider-appropriate LoadBalancer annotations
+# automatically — on AWS an NLB in TCP mode — so it comes up correctly with no
+# input. Anything you set under `annotations` is merged on top and wins.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: nginx-ingress
+spec:
+  clusterName: production        # your cluster
+  # version: 4.15.1              # optional — omit to use the platform default
+  configuration:
+    nginx:
+      replicas: 2
+      ingressClassName: nginx
+      # For clusters without a cloud load balancer (local / kind / bare-metal),
+      # expose the controller via NodePort instead of a LoadBalancer:
+      enableNodePort: false
+      autoScaling:
+        enabled: false
+        minReplicas: 2
+        maxReplicas: 5
+        targetCPUPercent: 80
+      # Optional — pin the controller to specific nodes (key=value):
+      # nodeSelector: workload=system
+      # Optional — extra Service annotations, MERGED over the provider defaults
+      # (your values win). Example: a private, internal-facing AWS NLB:
+      # annotations:
+      #   service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+      # Optional — enable SSL passthrough (advanced). TLS is terminated at NGINX
+      # by default; enable only when a backend terminates its own TLS, then
+      # annotate those Ingresses with nginx.ingress.kubernetes.io/ssl-passthrough.
+      # sslPassthrough: false
+  options:
+    waitForReady: true
+    timeout: 10m
