@@ -74,15 +74,16 @@ astroctl app status hello-world
 4. [Register an Existing Cluster (BYOK)](#register-an-existing-cluster-byok)
 5. [Manage Clusters](#available-clusters-and-their-state)
 6. [Deploy Application Profiles](#deploy-application-profiles)
-6. [External Access Setup (Optional)](#bring-your-own-external-access-optional)
+7. [Managed Cluster Add-ons](#managed-cluster-add-ons) — recommended: one-command ingress / TLS / DNS / autoscaling
+8. [External Access Setup — manual alternative (Optional)](#bring-your-own-external-access-optional)
    - [Kubernetes NGINX Ingress Controller](#kubernetes-nginx-ingress-controller)
    - [TLS Certificate](#tls-certificate)
    - [AWS Specific Setup](#aws)
    - [Google Cloud DNS Setup](#google-cloud-dns)
    - [External DNS](#external-dns)
-7. [Deploy Hello-world Application](#deploy-hello-world-application)
-8. [Remote Kubernetes Access](#remote-kubernetes-access)
-9. [Deploying Services](#deploying-services)
+9. [Deploy Hello-world Application](#deploy-hello-world-application)
+10. [Remote Kubernetes Access](#remote-kubernetes-access)
+11. [Deploying Services](#deploying-services)
    - [Cert-Manager](#cert-manager)
    - [Grafana](#grafana)
    - [Prometheus](#prometheus-operator)
@@ -92,9 +93,9 @@ astroctl app status hello-world
    - [Strimzi Kafka](#strimzi-kafka)
    - [Otel Collector](#otel-collector)
    - [Kube State Metrics](#kube-state-metrics)
-10. [Kubernetes Nginx Ingress Controller](#kubernetes-nginx-ingress-controller-1)
-11. [Application Debugging](#debugging)
-12. [Reference](#reference)
+12. [Kubernetes Nginx Ingress Controller](#kubernetes-nginx-ingress-controller-1)
+13. [Application Debugging](#debugging)
+14. [Reference](#reference)
 
 ## Download astroctl CLI
 ```
@@ -192,7 +193,44 @@ Then apply the application profile:
 astroctl app profile apply -f app-profiles/
 ```
 
+## Managed Cluster Add-ons
+
+Install the Kubernetes ecosystem apps most clusters need — **ingress, TLS certificates, DNS automation, and node autoscaling** — with one `astroctl` command on any AstroPulse cluster (provisioned or registered). You declare **intent** (which add-on + a few typed options); AstroPulse owns the chart, version, deployment lifecycle, and health. You never handle Helm values, and add-on configuration never contains cloud credentials.
+
+> This is the managed replacement for the manual [External Access Setup](#bring-your-own-external-access-optional) below. Prefer a UI? Manage the same add-ons from the [Astro Console](https://astropulse.io/console). Full details: [`cluster-addons/README.md`](cluster-addons/README.md) · [Cluster Add-ons docs](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons).
+
+Ready-to-edit example manifests live in [`cluster-addons/`](cluster-addons/):
+
+| File | Add-on | Namespace |
+|---|---|---|
+| [`cluster-addons/nginx-ingress.yaml`](cluster-addons/nginx-ingress.yaml) | NGINX Ingress | `ingress-nginx` |
+| [`cluster-addons/cert-manager.yaml`](cluster-addons/cert-manager.yaml) | cert-manager | `cert-manager` |
+| [`cluster-addons/external-dns.yaml`](cluster-addons/external-dns.yaml) | ExternalDNS | `external-dns` |
+| [`cluster-addons/karpenter.yaml`](cluster-addons/karpenter.yaml) | Karpenter (AWS) | `kube-system` |
+
+```bash
+# Install or update — declarative + idempotent (edit the file and re-apply to change):
+astroctl infra k8s addons apply -f cluster-addons/nginx-ingress.yaml
+
+# Watch it converge, then inspect / debug:
+astroctl infra k8s addons get    <cluster>                 # all installed add-ons
+astroctl infra k8s addons status <cluster> nginx-ingress
+astroctl infra k8s addons logs   <cluster> nginx-ingress   # add-on workload logs
+astroctl infra k8s addons events <cluster> nginx-ingress
+
+# Upgrade / roll back / uninstall:
+astroctl infra k8s addons versions <cluster> cert-manager
+astroctl infra k8s addons rollback <cluster> cert-manager
+astroctl infra k8s addons delete   <cluster> cert-manager
+```
+
+**Automatic HTTPS:** install NGINX + cert-manager (with a Let's Encrypt ClusterIssuer) + ExternalDNS together and every internet-facing app gets a DNS record and a trusted TLS certificate automatically.
+
+**Cloud identity (ExternalDNS & Karpenter):** these reach cloud APIs with the **cluster's own identity** — IRSA on AWS, Workload Identity on GCP/Azure — set up once with `astroctl cloud <aws|gcp> connect --cluster-name <name>`. Credentials never go in the manifest. Per-provider setup is in the [add-on docs](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons#externaldns-dns-automation).
+
 ## Bring your own External Access (Optional)
+
+> **Recommended:** use [Managed Cluster Add-ons](#managed-cluster-add-ons) above — NGINX, cert-manager, and ExternalDNS install and stay healthy with one `astroctl` command each. This section is the manual alternative for teams who want to own and manage these components themselves.
 
 `Note: Skip this section if using an Astro-managed cluster, as external access is pre-configured for applications using source type image`
 
