@@ -1,0 +1,32 @@
+# Karpenter — managed cluster add-on (AWS only: EKS and self-hosted)
+#
+# On EKS clusters provisioned by AstroPulse, Karpenter is installed WITH the
+# cluster and managed as part of it — you upgrade it here but cannot delete it
+# on its own. On AWS self-hosted clusters it installs and uninstalls like any
+# other add-on. Installs into the `kube-system` namespace.
+#
+# PREREQUISITE: Karpenter needs AWS identity (IRSA / node role) with EC2,
+# pricing, and interruption-queue permissions — set up as part of the cluster.
+# Replace the placeholders below with your account's values.
+#
+# Apply with:  astroctl infra k8s addons apply -f karpenter.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: karpenter
+spec:
+  clusterName: production
+  configuration:
+    karpenter:
+      enableSpotInterruption: true
+      aws:
+        # IRSA role Karpenter assumes (replace with your role ARN):
+        iamRoleArn: arn:aws:iam::<AWS_ACCOUNT_ID>:role/<KARPENTER_CONTROLLER_ROLE>
+        # Discover subnets and security groups for provisioned nodes by tag:
+        subnetTags:
+          - karpenter.sh/discovery=production
+        securityGroupTags:
+          - karpenter.sh/discovery=production
+  options:
+    waitForReady: true
+    timeout: 15m
