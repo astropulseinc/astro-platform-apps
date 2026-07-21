@@ -224,9 +224,12 @@ astroctl infra k8s addons rollback <cluster> cert-manager
 astroctl infra k8s addons delete   <cluster> cert-manager
 ```
 
-**Automatic HTTPS:** install NGINX + cert-manager (with a Let's Encrypt ClusterIssuer) + ExternalDNS together and every internet-facing app gets a DNS record and a trusted TLS certificate automatically.
+**HTTPS for your apps:** installing NGINX + cert-manager + ExternalDNS gives you the full ingress stack, with two things left to configure:
 
-**Cloud identity (ExternalDNS & Karpenter):** these reach cloud APIs with the **cluster's own identity** — IRSA on AWS, Workload Identity on GCP/Azure — set up once with `astroctl cloud <aws|gcp> connect --cluster-name <name>`. Credentials never go in the manifest. Per-provider setup is in the [add-on docs](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons#externaldns-dns-automation).
+- **DNS** — apps deployed with `externalAccess` (source type image) get their DNS record created automatically, provided ExternalDNS has DNS permission for your zone (see cloud identity below) and its `domainFilter` covers the app's domain. For Ingresses/Services you author yourself, add the `external-dns.alpha.kubernetes.io/hostname` annotation (see [External DNS](#external-dns)).
+- **TLS** — not automatic out of the box: the default [`cluster-addons/cert-manager.yaml`](cluster-addons/cert-manager.yaml) creates no ClusterIssuer (`enableClusterIssuer: false`). Switch to its Let's Encrypt variant (`enableClusterIssuer: true`, `issuerType: letsencrypt`, `email`), then have each Ingress request a certificate from it — the `cert-manager.io/cluster-issuer: astro-letsencrypt` annotation plus a `tls:` block naming the Secret.
+
+**Cloud identity (ExternalDNS & Karpenter):** these add-ons call cloud APIs with the **cluster's own identity** — IRSA on AWS, Workload Identity on GCP/Azure — which you set up out of band **before** applying them: for ExternalDNS, grant DNS permission (Route 53 / Cloud DNS / Azure DNS) to the `external-dns` service account in the `external-dns` namespace. Note that `astroctl cloud <provider> connect` links your account for platform-managed cluster operations (upgrades, scaling, deletion) — it does **not** grant these add-ons their cloud identity. Karpenter runs on AWS EKS only; on AstroPulse-provisioned EKS clusters its IAM roles are created during cluster provisioning. Credentials never go in the manifest. Per-provider steps are in the [add-on docs](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons#externaldns-dns-automation).
 
 ## Bring your own External Access (Optional)
 
