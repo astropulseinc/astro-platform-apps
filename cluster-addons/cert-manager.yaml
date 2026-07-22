@@ -23,11 +23,12 @@ spec:
     waitForReady: true
     timeout: 10m
 #
-# ── Variant: automatic public HTTPS (Let's Encrypt ACME) ──────────────────────
+# ── Variant: public HTTPS (Let's Encrypt ACME) ────────────────────────────────
 # Creates a ClusterIssuer named `astro-letsencrypt` that solves ACME HTTP-01
-# challenges through the `nginx` ingress class — install NGINX + ExternalDNS too
-# and a new app gets a trusted cert automatically (see the automatic-HTTPS recipe
-# in the docs). email is REQUIRED for Let's Encrypt.
+# challenges through the `nginx` ingress class. Ingresses that reference it
+# (a cert-manager.io/cluster-issuer: astro-letsencrypt annotation plus a tls:
+# block) get trusted certificates issued for them. email is REQUIRED for
+# Let's Encrypt.
 #
 #   configuration:
 #     certManager:
