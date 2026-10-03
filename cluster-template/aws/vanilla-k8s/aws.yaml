@@ -20,7 +20,7 @@ spec:
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
       bucketName: "<from-setup-output>"
 
-      # networkId: vpc-0123456789abcdef0  # optional: bring your own VPC
+      # networkId: <YOUR_VPC_ID>  # optional: bring your own VPC
 
       credentials:
         type: vault

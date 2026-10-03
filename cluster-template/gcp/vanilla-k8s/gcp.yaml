@@ -13,6 +13,7 @@ kind: K8sCluster
 spec:
   clusterName: v-gcp-cluster
   provider: gcp
+  region: us-central1 # gcloud config get compute/region
   provisioner:
     type: selfHosted
     selfHosted:
