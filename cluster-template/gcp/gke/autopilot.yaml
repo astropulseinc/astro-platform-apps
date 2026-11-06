@@ -23,7 +23,7 @@ spec:
       autopilot: true
 
       credentials:
-        type: dynamic
+        type: Dynamic
 
       # Optional: restrict API access to specific CIDRs
       # authorizedNetworks:

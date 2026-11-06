@@ -5,7 +5,7 @@ spec:
   profileName: profile3
   namespace: monitoring
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://prometheus-community.github.io/helm-charts
@@ -13,6 +13,6 @@ spec:
         chartName: kube-state-metrics
       # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml
       values:
-       type: object
+       type: Object
        object:
          namespaced: false

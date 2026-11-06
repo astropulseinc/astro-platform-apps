@@ -22,7 +22,7 @@ spec:
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
 
       credentials:
-        type: dynamic
+        type: Dynamic
 
   clusterSpec:
     dataPlane:
@@ -30,7 +30,7 @@ spec:
         - name: default-pool
           minNode: 1
           maxNode: 3
-          instanceType: ondemand  # or "spot" for cost savings
+          instanceType: OnDemand  # or "spot" for cost savings
           machineTypes:
             - t3.medium
           labels:

@@ -5,7 +5,7 @@ spec:
   profileName: profile3
   namespace: otel-collector
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
@@ -13,7 +13,7 @@ spec:
         chartName:  opentelemetry-collector
       # https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/values.yaml
       values:
-       type: object
+       type: Object
        object:
          mode: daemonset
          image:
