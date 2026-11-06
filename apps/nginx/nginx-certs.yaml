@@ -5,7 +5,7 @@ spec:
   profileName:  profile3
   namespace: nginx
   source:
-    type: yaml
+    type: YAML
     yaml: 
       repo: 
         path: resources/nginx

@@ -5,7 +5,7 @@ spec:
   profileName:  profile3
   namespace: monitoring
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://grafana.github.io/helm-charts
@@ -13,7 +13,7 @@ spec:
         chartName: grafana
       # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
       values:
-       type: object
+       type: Object
        object:
          namespaced: false
          persistence:

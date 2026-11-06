@@ -5,13 +5,13 @@ spec:
   profileName: profile3
   namespace: cert-manager
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://charts.jetstack.io
         chartVersion: v1.14.5
         chartName: cert-manager
       values:
-       type: object
+       type: Object
        object:
          installCRDs: true

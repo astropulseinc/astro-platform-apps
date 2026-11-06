@@ -5,7 +5,7 @@ spec:
   profileName:  profile3
   namespace: strimzi-kafka
   source:
-    type: yaml
+    type: YAML
     yaml: 
       repo: 
         path: resources/strimzi

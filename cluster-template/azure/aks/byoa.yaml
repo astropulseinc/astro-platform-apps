@@ -29,7 +29,7 @@ spec:
       resourceGroup: "<YOUR_RESOURCE_GROUP>"
 
       credentials:
-        type: dynamic
+        type: Dynamic
 
   clusterSpec:
     dataPlane:
@@ -40,7 +40,7 @@ spec:
         - name: systempool
           minNode: 2
           maxNode: 5
-          instanceType: ondemand  # required for system pools — do not change to spot
+          instanceType: OnDemand  # required for system pools — do not change to spot
           machineTypes:
             # Check available VM sizes for your subscription and region:
             #   az vm list-skus --location <YOUR_REGION> --resource-type virtualMachines -o table
