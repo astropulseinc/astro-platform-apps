@@ -1,0 +1,38 @@
+# A model on your domain, callable with an API key
+#
+# Served at https://qwen-chat.example.com through the gateway. Callers send a
+# key from the access policy access-policies/api-keys.yaml; a request without
+# one gets HTTP 401.
+#
+# Before you apply:
+#   - everything gpu.yaml needs
+#   - example.com verified under Integrations > Domains
+#   - the gateway add-on, cert-manager with a DNS solver
+#     (add-ons/cert-manager-letsencrypt-dns.yaml) and, to publish the DNS
+#     record, external-dns with gatewayRoutes: true
+#   - the access policy: astroctl access-policy apply -f access-policies/api-keys.yaml
+#
+# Apply:  astroctl app apply -f api-keys-endpoint.yaml --dry-run, then without --dry-run
+# Keys:   astroctl access-policy key create partner-keys --label partner-a
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-chat
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen3-8B
+      resources:
+        accelerator:
+          gpu:
+            model: l4
+            countPerReplica: 1
+      scaling:
+        minReplicas: 1
+        maxReplicas: 4
+  externalAccess:
+    domain: example.com               # served at qwen-chat.example.com
+    exposure: Public
+    accessPolicyRef:
+      name: partner-keys

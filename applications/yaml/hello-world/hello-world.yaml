@@ -1,0 +1,24 @@
+# Hello world from plain Kubernetes manifests in Git
+#
+# Applies every manifest under manifests/ and keeps the cluster in sync with
+# the folder: a change pushed to it is applied, and a file removed from it is
+# deleted from the cluster.
+#
+# Before you apply: a profile (profiles/). To use your own manifests, copy this
+# folder into your repository and change repoURL and path.
+#
+# Apply: astroctl app apply -f hello-world.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: hello-world-yaml
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: hello-world-yaml
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: applications/yaml/hello-world/manifests
+      include: "*.yaml"

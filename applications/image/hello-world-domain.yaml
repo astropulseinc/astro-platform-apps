@@ -1,0 +1,29 @@
+# Hello world on your domain over HTTPS
+#
+# Served at https://hello-world.example.com with a certificate AstroPulse
+# requests for it.
+#
+# Before you apply:
+#   - a profile that points at your cluster (profiles/)
+#   - example.com added and verified under Integrations > Domains
+#     (astroctl domain add example.com, then astroctl domain verify example.com)
+#   - the nginx-ingress and cert-manager add-ons on the cluster, and
+#     external-dns to publish the DNS record (add-ons/)
+#
+# Apply:  astroctl app apply -f hello-world-domain.yaml --dry-run, then without --dry-run
+# Check:  astroctl app get hello-world
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: hello-world
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Image
+    image:
+      registry: docker.io
+      repository: astropulse/latency
+      tag: v1.0.0
+      port: 8080
+  externalAccess:
+    hostname: hello-world.example.com   # or `domain: example.com` for <app>.example.com
+    exposure: Public                     # Public or Private

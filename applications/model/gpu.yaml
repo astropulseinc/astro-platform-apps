@@ -1,0 +1,38 @@
+# A Hugging Face model on one GPU, scaling with demand
+#
+# Qwen3 8B on an NVIDIA L4 per replica. Replicas scale from 1 to 4 on the
+# requests waiting for each replica.
+#
+# Before you apply:
+#   - a profile (profiles/)
+#   - GPU capacity: a GPU node group (clusters/aws/eks/gpu-node-group.yaml) or
+#     the karpenter GPU node pool (add-ons/karpenter-gpu-pool.yaml)
+#   - the cert-manager, model-serving, cost-visibility and
+#     workload-autoscaling add-ons (add-ons/)
+#   - for a gated model, connect Hugging Face once for your organization:
+#     astroctl integrations huggingface connect
+#
+# Apply:  astroctl app apply -f gpu.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-chat
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen3-8B          # add :<revision> to pin a commit
+      serving:
+        apiFormat: OpenAI
+        maxContextTokens: 8192
+      resources:
+        accelerator:
+          gpu:
+            model: l4
+            countPerReplica: 1
+      scaling:
+        minReplicas: 1
+        maxReplicas: 4
+        metric:
+          requestsWaiting:
+            target: "2"               # requests waiting per replica

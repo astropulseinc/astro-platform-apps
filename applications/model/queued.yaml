@@ -1,0 +1,28 @@
+# A model that takes its GPU through a workload queue
+#
+# The model joins the `inference` queue of the workload-queueing add-on
+# (add-ons/workload-queueing.yaml), so its replicas use that queue's GPU quota
+# and wait there when the quota is full.
+#
+# Before you apply: everything gpu.yaml needs, and the workload-queueing add-on.
+#
+# Apply:  astroctl app apply -f queued.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-queued
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen3-8B
+      resources:
+        accelerator:
+          gpu:
+            model: l4
+            countPerReplica: 1
+      scaling:
+        minReplicas: 1
+        maxReplicas: 2
+      queue:
+        name: inference

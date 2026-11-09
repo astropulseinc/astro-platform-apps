@@ -1,0 +1,32 @@
+# A model on your domain, callable with a token from your identity provider
+#
+# Served at https://chat.example.com. The gateway checks each caller's JWT
+# against access-policies/jwt.yaml before the request reaches the model.
+#
+# Before you apply:
+#   - everything api-keys-endpoint.yaml needs, with the JWT policy instead:
+#     astroctl access-policy apply -f access-policies/jwt.yaml
+#
+# Apply:  astroctl app apply -f jwt-endpoint.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-chat
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen3-8B
+      resources:
+        accelerator:
+          gpu:
+            model: l4
+            countPerReplica: 1
+      scaling:
+        minReplicas: 1
+        maxReplicas: 4
+  externalAccess:
+    hostname: chat.example.com
+    exposure: Public
+    accessPolicyRef:
+      name: company-callers

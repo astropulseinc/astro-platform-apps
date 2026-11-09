@@ -1,0 +1,27 @@
+# Hello world from a Helm chart kept in Git
+#
+# Renders the chart under chart/ with the values below and keeps the cluster in
+# sync with the repository. Values can also come from files in the chart:
+#   values:
+#     files: [values-production.yaml]
+#
+# Before you apply: a profile (profiles/). To use your own chart, copy this
+# folder into your repository and change repoURL and path.
+#
+# Apply: astroctl app apply -f hello-chart.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: hello-chart
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: hello-chart
+  source:
+    type: Repository
+    repository:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: applications/repository/hello-chart/chart
+      values:
+        object:
+          replicaCount: 2

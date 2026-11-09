@@ -1,0 +1,6 @@
+replicaCount: 1
+image:
+  repository: docker.io/astropulse/latency
+  tag: v1.0.0
+service:
+  port: 80
