@@ -1,23 +1,23 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: disallow-latest-tag
-  annotations:
-    policies.kyverno.io/title: Disallow the latest tag
-    policies.kyverno.io/severity: medium
 spec:
-  validationFailureAction: Audit
-  background: true
-  rules:
-    - name: pinned-tag
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaces: [latency-app]
-      validate:
-        message: "Use a fixed image tag, not latest."
-        pattern:
-          spec:
-            containers:
-              - image: "!*:latest"
+  validationActions: [Audit]
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: [latency-app]
+  validations:
+    - expression: "object.spec.containers.all(c, !c.image.endsWith(':latest'))"
+      message: "Use a fixed image tag, not latest."
