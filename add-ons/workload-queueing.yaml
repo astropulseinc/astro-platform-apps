@@ -1,0 +1,30 @@
+# Workload Queueing (Kueue): shares GPUs between teams and models within
+# quotas. A model application joins a queue with `model.queue.name`
+# (see applications/model/queued.yaml).
+#
+# Two queues share one cohort, so each may borrow GPUs the other is not using.
+#
+# Apply: astroctl infra k8s addons apply -f workload-queueing.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: workload-queueing
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    workloadQueueing:
+      integrations: [batch/job, deployment]
+      clusterQueues:
+        - name: inference
+          cohort: gpus
+          quota:
+            gpu: 2
+          preemption: Never
+        - name: research
+          cohort: gpus
+          quota:
+            gpu: 2
+          preemption: LowerPriority
+  options:
+    waitForReady: true
+    timeout: 10m

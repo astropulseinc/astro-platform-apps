@@ -1,32 +1,35 @@
-# Karpenter — managed cluster add-on (AWS only: EKS and self-hosted)
+# Node Autoscaling (karpenter): adds and removes nodes as demand changes.
+# AWS only (EKS and self-hosted). Installs into `kube-system`.
 #
-# On EKS clusters provisioned by AstroPulse, Karpenter is installed WITH the
-# cluster and managed as part of it — you upgrade it here but cannot delete it
-# on its own. On AWS self-hosted clusters it installs and uninstalls like any
-# other add-on. Installs into the `kube-system` namespace.
+# On an EKS cluster AstroPulse created, the controller role and the
+# interruption queue come with the cluster: leave `aws` out. On a registered
+# EKS cluster, run `astroctl cloud aws generate-karpenter`, deploy the stack it
+# writes, then set `aws.iamRoleArn` to the controller role it outputs and
+# `interruptionQueue: true`.
 #
-# PREREQUISITE: Karpenter needs AWS identity (IRSA / node role) with EC2,
-# pricing, and interruption-queue permissions — set up as part of the cluster.
-# Replace the placeholders below with your account's values.
-#
-# Apply with:  astroctl infra k8s addons apply -f karpenter.yaml
+# Apply: astroctl infra k8s addons apply -f karpenter.yaml
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterAddon
 metadata:
   name: karpenter
 spec:
-  clusterName: production
+  clusterName: <YOUR_CLUSTER_NAME>
   configuration:
     karpenter:
-      enableSpotInterruption: true
-      aws:
-        # IRSA role Karpenter assumes (replace with your role ARN):
-        iamRoleArn: arn:aws:iam::<AWS_ACCOUNT_ID>:role/<KARPENTER_CONTROLLER_ROLE>
-        # Discover subnets and security groups for provisioned nodes by tag:
-        subnetTags:
-          - karpenter.sh/discovery=production
-        securityGroupTags:
-          - karpenter.sh/discovery=production
+      cpuCapacityTypes: [OnDemand, Spot]
+      cpuLimit: 100          # most vCPU the default node pool runs at once
+      memoryLimit: 400Gi
+      disruption:
+        consolidationPolicy: WhenEmptyOrUnderutilized
+        consolidateAfter: 5m
+      # Registered EKS clusters only:
+      # interruptionQueue: true
+      # aws:
+      #   iamRoleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<YOUR_KARPENTER_CONTROLLER_ROLE>
+      #   subnetTags:
+      #     - karpenter.sh/discovery=<YOUR_CLUSTER_NAME>
+      #   securityGroupTags:
+      #     - karpenter.sh/discovery=<YOUR_CLUSTER_NAME>
   options:
     waitForReady: true
     timeout: 15m

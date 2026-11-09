@@ -1,0 +1,23 @@
+# Model Serving: serves model applications behind an OpenAI-compatible API.
+#
+# Needs: cert-manager. Without `modelCache`, every replica downloads its own
+# weights. With it, the weights are kept on the disks of the listed node groups
+# (and the GPU node pool), so a new replica there starts from the local copy.
+#
+# Apply: astroctl infra k8s addons apply -f model-serving.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: model-serving
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    modelServing: {}
+    # Keep weights on the nodes of these groups:
+    # modelServing:
+    #   modelCache:
+    #     backing: Node
+    #     nodeGroups: [gpu-pool]
+  options:
+    waitForReady: true
+    timeout: 15m

@@ -1,0 +1,26 @@
+# Node Autoscaling (karpenter) with a GPU node pool.
+#
+# GPU nodes are launched only while model replicas wait for one, and removed
+# once empty. `gpuLimit` caps how many GPUs the pool holds at once: set it to
+# the most you will pay for. GPU nodes are tainted nvidia.com/gpu:NoSchedule;
+# model applications tolerate it.
+#
+# Apply: astroctl infra k8s addons apply -f karpenter-gpu-pool.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: karpenter
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    karpenter:
+      enableGpuNodePool: true
+      gpuLimit: 4
+      allowedAccelerators: [l4, a10g]   # leave the largest GPUs out of reach
+      gpuCapacityTypes: [OnDemand]      # Spot can be reclaimed mid-request
+      gpuDisruption:
+        consolidationPolicy: WhenEmpty
+        consolidateAfter: 10m
+  options:
+    waitForReady: true
+    timeout: 15m

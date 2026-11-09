@@ -1,48 +1,24 @@
-# cert-manager — managed cluster add-on
+# Certificates (cert-manager): issues and renews TLS certificates.
 #
-# Apply with:  astroctl infra k8s addons apply -f cert-manager.yaml
+# With `email` set, AstroPulse creates two Let's Encrypt ClusterIssuers,
+# production and staging, that check domain ownership over HTTP-01 through
+# the Ingress. For a wildcard certificate or model endpoints on the gateway,
+# use cert-manager-letsencrypt-dns.yaml instead. For internal or test
+# clusters, set `issuerType: SelfSigned` and drop `email`.
 #
-# Defaults: installs the cert-manager CRDs (installCRDs: true) into the
-# `cert-manager` namespace. By default it does NOT create a ClusterIssuer — you
-# define your own Issuer/ClusterIssuer. Set enableClusterIssuer: true to have
-# the add-on create one for you (see the variants below).
+# Required by: model-serving, gateway.
+#
+# Apply: astroctl infra k8s addons apply -f cert-manager.yaml
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterAddon
 metadata:
   name: cert-manager
 spec:
-  clusterName: production
-  # version: v1.21.0             # optional — omit to use the platform default
+  clusterName: <YOUR_CLUSTER_NAME>
   configuration:
     certManager:
-      installCRDs: true          # set false only if the CRDs already exist
-      # No ClusterIssuer by default. Omit issuerType/email entirely unless
-      # enableClusterIssuer is true (the platform rejects them otherwise).
-      enableClusterIssuer: false
+      issuerType: LetsEncrypt      # LetsEncrypt, LetsEncryptStaging or SelfSigned
+      email: platform@example.com  # Let's Encrypt account and expiry notices
   options:
     waitForReady: true
     timeout: 10m
-#
-# ── Variant: public HTTPS (Let's Encrypt ACME) ────────────────────────────────
-# Creates a ClusterIssuer named `astro-letsencrypt` that solves ACME HTTP-01
-# challenges through the `nginx` ingress class. Ingresses that reference it
-# (a cert-manager.io/cluster-issuer: astro-letsencrypt annotation plus a tls:
-# block) get trusted certificates issued for them. email is REQUIRED for
-# Let's Encrypt.
-#
-#   configuration:
-#     certManager:
-#       installCRDs: true
-#       enableClusterIssuer: true
-#       issuerType: letsencrypt
-#       email: platform@example.com
-#
-# ── Variant: self-signed issuer (internal / testing, works in kind) ───────────
-# Creates a ClusterIssuer named `astro-selfsigned` — no ACME account, no public
-# DNS, no email. Ideal for local/kind validation.
-#
-#   configuration:
-#     certManager:
-#       installCRDs: true
-#       enableClusterIssuer: true
-#       issuerType: selfsigned
