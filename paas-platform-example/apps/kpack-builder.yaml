@@ -1,0 +1,13 @@
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: kpack-builder
+  profileName: platform
+  namespace: kpack
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/your-org/astro-platform-apps.git
+        targetRevision: main
+        path: paas-platform-example/resources/kpack

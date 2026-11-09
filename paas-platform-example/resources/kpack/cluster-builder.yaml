@@ -1,0 +1,25 @@
+apiVersion: kpack.io/v1alpha2
+kind: ClusterBuilder
+metadata:
+  name: default
+spec:
+  # Where kpack publishes the builder image: your registry.
+  tag: ghcr.io/your-org/kpack-builder
+  serviceAccountRef:
+    name: kpack-service-account
+    namespace: kpack
+  stack:
+    name: base
+    kind: ClusterStack
+  store:
+    name: default
+    kind: ClusterStore
+  order:
+    - group:
+        - id: paketo-buildpacks/go
+    - group:
+        - id: paketo-buildpacks/nodejs
+    - group:
+        - id: paketo-buildpacks/python
+    - group:
+        - id: paketo-buildpacks/java
