@@ -1,33 +1,26 @@
-# EKS Cluster Update
+# Update an EKS cluster's node groups and tags
 #
-# Usage: astroctl infra k8s update <cluster-name> -f eks-update.yaml
-# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
-
+# Lists only what changes. A node group not listed keeps its settings; a node
+# group listed with a new name is added.
+#
+# Apply: astroctl infra k8s update <YOUR_CLUSTER_NAME> -f update-node-groups.yaml --dry-run,
+#        then without --dry-run
+# See what the cluster accepts: astroctl infra k8s update <YOUR_CLUSTER_NAME> --example
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterUpdate
 spec:
-  # Optional: K8s version upgrade (must be valid upgrade path)
-  # kubernetesVersion: "1.30"
-
+  # kubernetesVersion: "1.36"      # upgrade; list versions with: astroctl infra k8s upgrade <YOUR_CLUSTER_NAME> --list-versions
   nodeGroups:
     - name: default-pool
       minNode: 2
       maxNode: 10
-      # machineTypes:        # update triggers node replacement
+      # machineTypes:              # changing them replaces the group's nodes
       #   - t3.large
       labels:
         environment: production
-        updated: "true"
-
-  # eks:
-  #   amiFamily: AL2023   # AL2023 (default), AL2, Bottlerocket, Ubuntu
-
   updateConfig:
     maxUnavailable: "1"
     maxSurge: "1"
-    dryRun: false
-
   tags:
     environment: production
     team: platform
-    updated-by: astroctl

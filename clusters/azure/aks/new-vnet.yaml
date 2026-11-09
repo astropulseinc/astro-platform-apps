@@ -1,49 +1,38 @@
-# AKS Cluster (Dynamic Credentials)
+# AKS cluster in a new virtual network
 #
-# Prerequisites:
-# 1. Find your Azure subscription ID:
-#      az account show --query id -o tsv
-# 2. Create a resource group (if needed):
-#      az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
-# 3. Run: astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
-#    Then run the saved script: bash astro-azure-setup-<YOUR_CLUSTER_NAME>.sh
+# Before you apply:
+#   1. Find your subscription ID:  az account show --query id -o tsv
+#   2. Create a resource group if you need one:
+#        az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
+#   3. Connect the subscription, then run the script it saves:
+#        astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
-# Usage: astroctl infra k8s apply -f byoa.yaml
+# Apply: astroctl infra k8s apply -f new-vnet.yaml --dry-run, then without --dry-run
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
-
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
   clusterName: <YOUR_CLUSTER_NAME>
   provider: azure
-  region: <YOUR_REGION>          # e.g. eastus — must match the region used in step 3 above
+  region: <YOUR_REGION>                # the region you connected, such as eastus
   provisioner:
     type: aks
     aks:
-      # Azure subscription ID (UUID format)
-      # Find with: az account show --query id -o tsv
       subscriptionId: "<YOUR_SUBSCRIPTION_ID>"
-
-      # Azure resource group where the cluster will be created
-      # Create with: az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
       resourceGroup: "<YOUR_RESOURCE_GROUP>"
-
       credentials:
         type: Dynamic
-
   clusterSpec:
     dataPlane:
       nodeGroups:
-        # The first nodeGroup is always the system pool. AKS node pool names must start with a
-        # lowercase letter, contain only lowercase alphanumeric characters, and be ≤12 chars (Linux).
-        # System pools must use ondemand — Azure does not allow spot for system pools.
+        # The first node group is the system pool: lowercase letters and
+        # digits, at most 12 characters, and OnDemand (Azure refuses Spot there).
         - name: systempool
           minNode: 2
           maxNode: 5
-          instanceType: OnDemand  # required for system pools — do not change to spot
+          instanceType: OnDemand
           machineTypes:
-            # Check available VM sizes for your subscription and region:
-            #   az vm list-skus --location <YOUR_REGION> --resource-type virtualMachines -o table
-            - Standard_D2s_v7
+            # List sizes: az vm list-skus --location <YOUR_REGION> --resource-type virtualMachines -o table
+            - Standard_D2s_v5
           labels:
             environment: dev

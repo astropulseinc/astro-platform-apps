@@ -1,39 +1,23 @@
-# GKE Cluster Update
+# Update a GKE cluster's node groups and tags
 #
-# Usage: astroctl infra k8s update <cluster-name> -f gke-update.yaml
-# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
-
+# Lists only what changes. A node group not listed keeps its settings; a node
+# group listed with a new name is added.
+#
+# Apply: astroctl infra k8s update <YOUR_CLUSTER_NAME> -f update-node-groups.yaml --dry-run,
+#        then without --dry-run
+# See what the cluster accepts: astroctl infra k8s update <YOUR_CLUSTER_NAME> --example
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterUpdate
 spec:
-  # Optional: K8s version upgrade (must be valid upgrade path)
-  # kubernetesVersion: "1.30"
-
   nodeGroups:
     - name: default-pool
       minNode: 2
       maxNode: 10
-      # machineTypes:        # update triggers node recreation
-      #   - e2-standard-4
       labels:
         environment: production
-        updated: "true"
-
-  gke:
-    # imageType: UBUNTU_CONTAINERD    # COS_CONTAINERD (default), UBUNTU_CONTAINERD
-    # releaseChannel: STABLE           # STABLE (default), REGULAR, RAPID
-    # maintenanceWindow:
-    #   startTime: "2024-01-20T03:00:00Z"
-    #   duration: "4h"
-    # authorizedNetworks:
-    #   - "10.0.0.0/8"
-
   updateConfig:
     maxUnavailable: "1"
     maxSurge: "1"
-    dryRun: false
-
   tags:
     environment: production
     team: platform
-    updated-by: astroctl

@@ -1,33 +1,24 @@
-# GKE Autopilot Cluster
+# GKE Autopilot cluster
 #
-# Fully managed — GKE handles node provisioning, scaling, and security patches.
-# You pay per pod (CPU/memory), not per node. No dataPlane config needed.
+# Google manages the nodes, their scaling and their patches, and bills per pod,
+# so there are no node groups.
 #
-# Prerequisites:
-# 1. Run: astroctl cloud gcp connect --project-id <project> --cluster-name <name> --region <region>
+# Before you apply, connect the project:
+#   astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
-# Usage: astroctl infra k8s apply -f gke-autopilot.yaml
+# Apply: astroctl infra k8s apply -f autopilot.yaml --dry-run, then without --dry-run
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
-
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
-  clusterName: my-autopilot-cluster
+  clusterName: <YOUR_CLUSTER_NAME>
   provider: gcp
-  region: us-central1
+  region: <YOUR_REGION>
   provisioner:
     type: gke
     gke:
-      projectId: "<YOUR_GCP_PROJECT_ID>"   # e.g. my-project-123456
-
+      projectId: "<YOUR_GCP_PROJECT_ID>"
       autopilot: true
-
       credentials:
         type: Dynamic
-
-      # Optional: restrict API access to specific CIDRs
-      # authorizedNetworks:
-      #   - "10.0.0.0/8"
-
-  # Autopilot: Google manages the nodes, so clusterSpec has no nodeGroups.
   clusterSpec: {}

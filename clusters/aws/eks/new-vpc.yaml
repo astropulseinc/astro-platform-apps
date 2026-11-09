@@ -1,36 +1,34 @@
-# EKS Cluster (Dynamic Credentials)
+# EKS cluster in a new VPC
 #
-# Prerequisites:
-# 1. Find your AWS account ID:
-#      aws sts get-caller-identity --query Account --output text
-# 2. Run: astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+# AstroPulse creates the VPC, the EKS control plane and one managed node group.
 #
-# Usage: astroctl infra k8s apply -f byoa.yaml
+# Before you apply:
+#   1. Find your AWS account ID:
+#        aws sts get-caller-identity --query Account --output text
+#   2. Connect the account (once per account and region):
+#        astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f new-vpc.yaml --dry-run, then without --dry-run
 # Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
-
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:
   clusterName: <YOUR_CLUSTER_NAME>
   provider: aws
-  region: <YOUR_REGION>          # e.g. us-east-1 — must match the region used in step 2 above
+  region: <YOUR_REGION>                # the region you connected, such as us-east-1
   provisioner:
     type: eks
     eks:
-      # 12-digit AWS account ID
-      # Find with: aws sts get-caller-identity --query Account --output text
       accountId: "<YOUR_AWS_ACCOUNT_ID>"
-
       credentials:
         type: Dynamic
-
   clusterSpec:
     dataPlane:
       nodeGroups:
         - name: default-pool
           minNode: 1
           maxNode: 3
-          instanceType: OnDemand  # or "spot" for cost savings
+          instanceType: OnDemand       # OnDemand or Spot
           machineTypes:
             - t3.medium
           labels:
