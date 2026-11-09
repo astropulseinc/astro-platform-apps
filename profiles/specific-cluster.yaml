@@ -1,11 +1,11 @@
-# Cluster-pinned profile — targets a specific cluster by name.
+# Application profile: one named cluster
 #
-# Replace <YOUR_CLUSTER_NAME> with the name of a cluster visible in:
-#   astroctl infra k8s get
+# Applications that use this profile deploy to the cluster you name.
+# List your clusters with: astroctl infra k8s get
 #
-# Usage: astroctl app profile apply -f profile3.yaml
+# Apply: astroctl app profile apply -f specific-cluster.yaml
 apiVersion: platform.astropulse.io/v1
 kind: ApplicationProfile
 spec:
-  profileName: profile3
+  profileName: <YOUR_PROFILE_NAME>
   clusterName: <YOUR_CLUSTER_NAME>
