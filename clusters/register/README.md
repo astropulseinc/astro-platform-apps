@@ -13,6 +13,8 @@ kubectl config current-context        # the cluster to register
 astroctl infra k8s register -f existing-cluster.yaml
 # or, without a file:
 astroctl infra k8s register --cluster-name <YOUR_CLUSTER_NAME>
+# or another kubeconfig and context:
+astroctl infra k8s register --cluster-name <YOUR_CLUSTER_NAME> --kubeconfig ~/.kube/config --context <YOUR_CONTEXT>
 astroctl infra k8s get
 ```
 

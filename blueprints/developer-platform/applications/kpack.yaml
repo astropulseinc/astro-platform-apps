@@ -1,4 +1,7 @@
-# Reads the unmodified kpack release from this repository, so it needs no copy of its own.
+# kpack, from its unmodified v0.18.0 release manifest in resources/kpack-release.
+# Reads the release from this repository, so it needs no copy of its own.
+#
+# Apply: astroctl app apply -f kpack.yaml
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:

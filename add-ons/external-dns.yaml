@@ -18,7 +18,7 @@ spec:
       provider: aws                 # aws, gcp or azure; defaults to the cluster's cloud
       domainFilter: example.com     # the zone it may write to
       policy: Sync                  # Sync, or UpsertOnly to never delete records
-      gatewayRoutes: true           # also publish model endpoints on the gateway
+      gatewayRoutes: false          # true publishes model endpoints too; needs the gateway add-on
       identity:
         awsRoleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<YOUR_EXTERNAL_DNS_ROLE>
       # Instead of identity:

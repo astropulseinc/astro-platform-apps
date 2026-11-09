@@ -19,8 +19,10 @@ requests, and cost and GPU metrics are reported per model.
   `astroctl cloud aws accelerators list -r <YOUR_REGION>`.
 - A subdomain you own (`apps.example.com` here) with a Route 53 hosted zone,
   and the domain verified under Integrations > Domains.
-- An identity provider with an issuer URL; put it in `access-policy.yaml`.
-- For a gated model, a Hugging Face token: `astroctl integrations huggingface connect --token <YOUR_HF_TOKEN>`.
+- An identity provider with an issuer URL that serves an OpenID discovery
+  document; put it in `access-policy.yaml`. AstroPulse reads its signing keys
+  before saving the policy.
+- For a gated model, a Hugging Face token: `echo "$HF_TOKEN" | astroctl integrations huggingface connect --token-stdin`.
 
 ## Apply, in order
 
@@ -29,7 +31,7 @@ astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YO
 astroctl infra k8s apply -f cluster.yaml --dry-run
 astroctl infra k8s apply -f cluster.yaml
 
-for f in cert-manager model-serving gateway karpenter cost-visibility \
+for f in cert-manager karpenter model-serving gateway cost-visibility \
          workload-autoscaling accelerator-metrics vulnerability-scanning \
          external-dns workload-queueing; do
   astroctl infra k8s addons apply -f add-ons/$f.yaml
@@ -41,11 +43,21 @@ astroctl app apply -f model.yaml --dry-run
 astroctl app apply -f model.yaml
 ```
 
-External DNS and Workload Queueing are optional. cert-manager starts on the
-Let's Encrypt staging issuer; switch `issuerType` to `LetsEncrypt` once the
-endpoint answers.
+External DNS and Workload Queueing are optional. Node Autoscaling goes before
+Model Serving, because the weight cache lives on its GPU node pool.
+
+cert-manager starts on the Let's Encrypt staging issuer, which avoids its rate
+limits while you set up but is not trusted by clients. Once the model's
+certificate is issued, switch to production and apply again:
+
+```bash
+sed -i.bak 's/issuerType: LetsEncryptStaging/issuerType: LetsEncrypt/' add-ons/cert-manager.yaml
+astroctl infra k8s addons apply -f add-ons/cert-manager.yaml
+```
 
 ## Check it
+
+With the production issuer in place:
 
 ```bash
 astroctl app get qwen-chat

@@ -1,4 +1,4 @@
-# 4. Node Autoscaling with its GPU node pool: GPU nodes appear for pending
+# 2. Node Autoscaling with its GPU node pool: GPU nodes appear for pending
 #    model replicas and are removed once empty.
 apiVersion: platform.astropulse.io/v1
 kind: K8sClusterAddon

@@ -1,3 +1,6 @@
+# The Kyverno policies in resources/kyverno, from your fork, in Audit mode.
+#
+# Apply: astroctl app apply -f kyverno-policies.yaml (once Kyverno is running)
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:

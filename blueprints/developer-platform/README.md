@@ -24,7 +24,7 @@ GitHub workflow that ships it, lives in
 
 1. Fork this repository into your GitHub organization. `kpack-builder.yaml` and
    `kyverno-policies.yaml` read from your fork, because you edit those files.
-2. Replace `<YOUR_GITHUB_ORG>` in `platform-profile.yaml`'s neighbours:
+2. In your fork, replace `<YOUR_GITHUB_ORG>` in
    `applications/kpack-builder.yaml`, `applications/kyverno-policies.yaml`,
    `resources/kpack/cluster-builder.yaml` and
    `resources/kyverno/require-trusted-registry.yaml`, and `<YOUR_CLUSTER_NAME>`

@@ -14,6 +14,10 @@ runtime, checks the cluster can hold the model, and scales its replicas.
 
 ## Before you apply
 
+`gpu.yaml`, `api-keys-endpoint.yaml` and `jwt-endpoint.yaml` all deploy
+`qwen-chat`: applying one updates the model the previous one deployed.
+
+
 | Needed for | What |
 |---|---|
 | every file | A profile ([`../../profiles/`](../../profiles/)); the `cert-manager` and `model-serving` add-ons |
@@ -21,7 +25,7 @@ runtime, checks the cluster can hold the model, and scales its replicas.
 | scaling on waiting requests | The `cost-visibility` and `workload-autoscaling` add-ons |
 | endpoints | Your domain verified (Integrations > Domains); the `gateway` add-on and cert-manager with a DNS solver ([`../../add-ons/cert-manager-letsencrypt-dns.yaml`](../../add-ons/cert-manager-letsencrypt-dns.yaml)); the access policy ([`../../access-policies/`](../../access-policies/)) |
 | `queued.yaml` | The `workload-queueing` add-on with an `inference` queue ([`../../add-ons/workload-queueing.yaml`](../../add-ons/workload-queueing.yaml)) |
-| gated models | Hugging Face connected once for your organization: `astroctl integrations huggingface connect --token <YOUR_HF_TOKEN>` or Integrations > Hugging Face |
+| gated models | Hugging Face connected once for your organization: `echo "$HF_TOKEN" | astroctl integrations huggingface connect --token-stdin` or Integrations > Hugging Face |
 
 ## Apply
 

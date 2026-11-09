@@ -10,7 +10,7 @@ Set up the project once; the setup prints the bucket name for `bucketName`:
 
 ```bash
 astroctl cloud gcp selfHosted setup --project-id <YOUR_GCP_PROJECT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
-astroctl cloud gcp selfHosted connect --cluster-name <YOUR_CLUSTER_NAME>
+astroctl cloud gcp selfHosted status --cluster-name <YOUR_CLUSTER_NAME>   # check the setup
 ```
 
 ## Apply

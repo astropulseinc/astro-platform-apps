@@ -26,7 +26,8 @@ In the console: Infrastructure > Kubernetes, open the cluster, then its
 | [`accelerator-metrics.yaml`](accelerator-metrics.yaml) | Accelerator Metrics | GPU utilization, memory and power per application |
 
 Some add-ons need others first: model-serving and gateway need cert-manager,
-and workload-autoscaling reads metrics from cost-visibility's Prometheus.
+workload-autoscaling reads metrics from cost-visibility's Prometheus, and
+external-dns with `gatewayRoutes: true` needs the gateway add-on.
 
 ## Apply
 
@@ -45,5 +46,16 @@ add-on. To see every setting an add-on accepts on your cluster:
 ```bash
 astroctl infra k8s addons template <YOUR_CLUSTER_NAME> gateway
 ```
+
+## Upgrade, roll back, remove
+
+```bash
+astroctl infra k8s addons versions <YOUR_CLUSTER_NAME> cert-manager   # versions you can move to
+astroctl infra k8s addons history <YOUR_CLUSTER_NAME> cert-manager
+astroctl infra k8s addons rollback <YOUR_CLUSTER_NAME> cert-manager --dry-run
+astroctl infra k8s addons delete <YOUR_CLUSTER_NAME> cert-manager
+```
+
+To upgrade, set `spec.version` in the file and apply it again.
 
 Docs: [Cluster add-ons](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons)

@@ -1,3 +1,6 @@
+# Kyverno, from its Helm chart.
+#
+# Apply: astroctl app apply -f kyverno.yaml
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:

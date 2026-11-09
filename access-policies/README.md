@@ -1,8 +1,8 @@
 # Access policies
 
 An access policy decides who may call a model endpoint. The gateway add-on
-checks it before a request reaches the model; a request it refuses gets HTTP
-401. A model names its policy in `externalAccess.accessPolicyRef`.
+checks it before a request reaches the model: a request without a valid key or
+token gets HTTP 401, and a token missing a required claim gets HTTP 403. A model names its policy in `externalAccess.accessPolicyRef`.
 
 | File | Admits |
 |---|---|
@@ -18,8 +18,10 @@ astroctl access-policy key create partner-keys --label partner-a   # shown once;
 astroctl access-policy get
 ```
 
-For `jwt.yaml`, AstroPulse reads the issuer's discovery document to find its
-signing keys. Set `jwksUri` if the issuer publishes none.
+For `jwt.yaml`, set `issuer` to your identity provider: AstroPulse reads the
+issuer's discovery document to find its signing keys, and refuses the policy,
+even on `--dry-run`, while it cannot reach it. If the issuer publishes no
+discovery document, set `jwksUri` and apply with `--allow-unverified`.
 
 In the console: Integrations > Access Policies.
 

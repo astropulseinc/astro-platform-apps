@@ -3,8 +3,8 @@
 # to 2 on the requests waiting for them.
 #
 # Before you apply: example.com verified under Integrations > Domains, a
-# Hugging Face connection for gated models (astroctl integrations huggingface
-# connect), and everything else in this folder.
+# Hugging Face connection for gated models (see README.md), and everything
+# else in this folder.
 #
 # Apply: astroctl app apply -f model.yaml --dry-run, then without --dry-run
 apiVersion: platform.astropulse.io/v1

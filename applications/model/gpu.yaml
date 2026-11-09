@@ -10,7 +10,7 @@
 #   - the cert-manager, model-serving, cost-visibility and
 #     workload-autoscaling add-ons (add-ons/)
 #   - for a gated model, connect Hugging Face once for your organization:
-#     astroctl integrations huggingface connect
+#     echo "$HF_TOKEN" | astroctl integrations huggingface connect --token-stdin
 #
 # Apply:  astroctl app apply -f gpu.yaml --dry-run, then without --dry-run
 apiVersion: platform.astropulse.io/v1

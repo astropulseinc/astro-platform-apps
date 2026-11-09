@@ -10,7 +10,7 @@ Set up the account once; the setup prints the bucket name for `bucketName`:
 
 ```bash
 astroctl cloud aws selfHosted setup --account-id <YOUR_AWS_ACCOUNT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
-astroctl cloud aws selfHosted connect --cluster-name <YOUR_CLUSTER_NAME>
+astroctl cloud aws selfHosted status --cluster-name <YOUR_CLUSTER_NAME>   # check the setup
 ```
 
 ## Apply
