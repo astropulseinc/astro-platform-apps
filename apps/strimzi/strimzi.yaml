@@ -5,7 +5,7 @@ spec:
   profileName: profile3
   namespace: strimzi-kafka
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: oci://quay.io/strimzi-helm
@@ -14,7 +14,7 @@ spec:
         chartName: strimzi-kafka-operator
       # https://github.com/strimzi/strimzi-kafka-operator/blob/main/packaging/helm-charts/helm3/strimzi-kafka-operator/values.yaml
       values:
-       type: object
+       type: Object
        object:
          namespaced: false
          watchAnyNamespace: true

@@ -25,23 +25,23 @@ spec:
       # Replace all subnet-* values with your actual subnet IDs
       subnets:
         us-west-2a:
-          - type: public
+          - type: Public
             id: "<YOUR_PUBLIC_SUBNET_2A>"   # e.g. subnet-0abc1234def56789a
-          - type: private
+          - type: Private
             id: "<YOUR_PRIVATE_SUBNET_2A>"
         us-west-2b:
-          - type: public
+          - type: Public
             id: "<YOUR_PUBLIC_SUBNET_2B>"
-          - type: private
+          - type: Private
             id: "<YOUR_PRIVATE_SUBNET_2B>"
         us-west-2c:
-          - type: public
+          - type: Public
             id: "<YOUR_PUBLIC_SUBNET_2C>"
-          - type: private
+          - type: Private
             id: "<YOUR_PRIVATE_SUBNET_2C>"
 
       credentials:
-        type: dynamic
+        type: Dynamic
 
   clusterSpec:
     dataPlane:
@@ -49,7 +49,7 @@ spec:
         - name: default-pool
           minNode: 1
           maxNode: 3
-          instanceType: ondemand  # or "spot" for cost savings
+          instanceType: OnDemand  # or "spot" for cost savings
           machineTypes:
             - t3.medium
           labels:

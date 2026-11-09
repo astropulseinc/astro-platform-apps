@@ -18,7 +18,7 @@ spec:
   # Must match an existing profile — list profiles with: astroctl app profile get
   profileName: <YOUR_PROFILE_NAME>
   source:
-    type: image
+    type: Image
     image:
       registry: docker.io
       repository: astropulse/latency

@@ -5,14 +5,14 @@ spec:
   profileName: profile3
   namespace: external-dns
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://charts.bitnami.com/bitnami
         chartVersion: 7.3.2
         chartName: external-dns
       values:
-       type: object
+       type: Object
        object:
          resources:
            limits:

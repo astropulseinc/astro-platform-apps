@@ -5,7 +5,7 @@ spec:
   profileName: profile3
   namespace: external-dns
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://charts.bitnami.com/bitnami
@@ -13,7 +13,7 @@ spec:
         chartName: external-dns
       # https://github.com/bitnami/charts/blob/main/bitnami/external-dns/values.yaml
       values:
-       type: object
+       type: Object
        object:
          resources:
            limits:

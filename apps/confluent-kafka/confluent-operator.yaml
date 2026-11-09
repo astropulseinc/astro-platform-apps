@@ -5,7 +5,7 @@ spec:
   profileName: profile3
   namespace: confluent
   source:
-    type: helm
+    type: Helm
     helm: 
       repo: 
         repoURL: https://packages.confluent.io/helm
@@ -13,6 +13,6 @@ spec:
         chartName: confluent-for-kubernetes
       # follow this doc, https://docs.confluent.io/operator/current/co-deploy-cfk.html
       values:
-       type: object
+       type: Object
        object:
          namespaced: false

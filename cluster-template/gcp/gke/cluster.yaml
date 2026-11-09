@@ -24,7 +24,7 @@ spec:
       projectId: "<YOUR_GCP_PROJECT_ID>"   # e.g. my-project-123456
 
       credentials:
-        type: dynamic
+        type: Dynamic
 
       # kubernetesVersion: "1.30.5-gke.1443001"  # GKE version format; omit to use channel default
       # releaseChannel: STABLE                    # STABLE (default), REGULAR, RAPID
@@ -38,7 +38,7 @@ spec:
         - name: default-pool
           minNode: 1
           maxNode: 5
-          instanceType: ondemand  # or "spot" for cost savings
+          instanceType: OnDemand  # or "spot" for cost savings
           machineTypes:
             - e2-standard-2
           labels:
