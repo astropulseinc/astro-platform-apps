@@ -1,0 +1,14 @@
+# Reads the unmodified kpack release from this repository, so it needs no copy of its own.
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: kpack
+  profileName: platform
+  namespace: kpack
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: paas-platform-example/resources/kpack-release

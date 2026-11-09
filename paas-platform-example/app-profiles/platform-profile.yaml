@@ -1,0 +1,5 @@
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: platform
+  clusterName: your-cluster
