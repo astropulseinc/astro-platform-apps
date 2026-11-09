@@ -1,21 +1,25 @@
+# Prometheus server, from its Helm chart
+#
+# Alertmanager and the Pushgateway are turned off.
+#
+# Apply: astroctl app apply -f prometheus.yaml
+# Chart values: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
   name: prometheus
-  profileName: profile3
+  profileName: <YOUR_PROFILE_NAME>
   namespace: monitoring
   source:
     type: Helm
-    helm: 
-      repo: 
+    helm:
+      repo:
         repoURL: https://prometheus-community.github.io/helm-charts
-        chartVersion: 25.27.0
         chartName: prometheus
-      # https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus/values.yaml
+        chartVersion: 25.27.0
       values:
-       type: Object
-       object:
-         alertmanager:
-           enabled: false
-         prometheus-pushgateway:
-           enabled: false
+        object:
+          alertmanager:
+            enabled: false
+          prometheus-pushgateway:
+            enabled: false

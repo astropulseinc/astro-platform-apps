@@ -1,22 +1,18 @@
+# A one-node ClickHouse cluster, from the manifests in resources/
+#
+# Before you apply: clickhouse-operator.yaml.
+#
+# Apply: astroctl app apply -f clickhouse.yaml
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
   name: clickhouse
-  profileName:  profile3
+  profileName: <YOUR_PROFILE_NAME>
   namespace: clickhouse
   source:
-    type: Helm
-    helm: 
-      repo: 
-        repoURL: https://charts.bitnami.com/bitnami
-        chartVersion: 6.3.0
-        chartName: clickhouse
-      # https://github.com/bitnami/charts/blob/main/bitnami/clickhouse/values.yaml
-      values:
-       type: Object
-       object:
-         auth:
-           username: "clickhouse"
-           password: "clickhouse"
-         zookeeper:
-           enabled: false
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: applications/helm/clickhouse/resources

@@ -1,29 +1,33 @@
+# OpenTelemetry Collector, from its Helm chart
+#
+# One collector per node, gathering host, kubelet and Kubernetes event data.
+#
+# Apply: astroctl app apply -f opentelemetry-collector.yaml
+# Chart values: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
-  name: otel-collector-operator
-  profileName: profile3
-  namespace: otel-collector
+  name: opentelemetry-collector
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: opentelemetry
   source:
     type: Helm
-    helm: 
-      repo: 
+    helm:
+      repo:
         repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+        chartName: opentelemetry-collector
         chartVersion: 0.108.0
-        chartName:  opentelemetry-collector
-      # https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/values.yaml
       values:
-       type: Object
-       object:
-         mode: daemonset
-         image:
+        object:
+          mode: daemonset
+          image:
             repository: otel/opentelemetry-collector-k8s
-         presets:
-           hostMetrics:
-             enabled: true
-           kubernetesEvents:
-             enabled: true
-           kubeletMetrics:
-             enabled: true
-           kubernetesAttributes:
-             enabled: true
+          presets:
+            hostMetrics:
+              enabled: true
+            kubernetesEvents:
+              enabled: true
+            kubeletMetrics:
+              enabled: true
+            kubernetesAttributes:
+              enabled: true

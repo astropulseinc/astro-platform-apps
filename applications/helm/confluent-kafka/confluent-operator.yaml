@@ -1,18 +1,23 @@
+# Confluent for Kubernetes (CFK) operator, from its Helm chart
+#
+# Watches every namespace for Confluent resources. kafka.yaml deploys a
+# ZooKeeper ensemble, a Kafka cluster and a topic.
+#
+# Apply: astroctl app apply -f confluent-operator.yaml
+# Docs:  https://docs.confluent.io/operator/current/co-deploy-cfk.html
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
   name: confluent-operator
-  profileName: profile3
+  profileName: <YOUR_PROFILE_NAME>
   namespace: confluent
   source:
     type: Helm
-    helm: 
-      repo: 
+    helm:
+      repo:
         repoURL: https://packages.confluent.io/helm
-        chartVersion: 0.921.20
         chartName: confluent-for-kubernetes
-      # follow this doc, https://docs.confluent.io/operator/current/co-deploy-cfk.html
+        chartVersion: 0.921.20
       values:
-       type: Object
-       object:
-         namespaced: false
+        object:
+          namespaced: false

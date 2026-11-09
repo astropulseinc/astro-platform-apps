@@ -1,29 +1,31 @@
+# Grafana, from its Helm chart
+#
+# The admin password is generated into the Secret `grafana` in the
+# `monitoring` namespace:
+#   kubectl -n monitoring get secret grafana -o jsonpath='{.data.admin-password}' | base64 -d
+#
+# The volume uses the cluster's default StorageClass; set
+# persistence.storageClassName if the cluster has none.
+#
+# Apply: astroctl app apply -f grafana.yaml
+# Chart values: https://github.com/grafana-community/helm-charts/tree/main/charts/grafana
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
-  name: grafana-service
-  profileName:  profile3
+  name: grafana
+  profileName: <YOUR_PROFILE_NAME>
   namespace: monitoring
   source:
     type: Helm
-    helm: 
-      repo: 
-        repoURL: https://grafana.github.io/helm-charts
-        chartVersion: 8.0.0
+    helm:
+      repo:
+        repoURL: https://grafana-community.github.io/helm-charts
         chartName: grafana
-      # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+        chartVersion: 14.4.0
       values:
-       type: Object
-       object:
-         namespaced: false
-         persistence:
-           # make sure to use the right storage class for the PVC in the resources/ folder. Only storage classes that are created part of the cluster for eks is gp2. There will be no default storage class for the PVC. So make sure to create the storage class before deploying the application.
-           storageClassName: gp2 
-           type: pvc
-           enabled: true
-           size: 10Gi
-         adminUser: admin
-         adminPassword: 66YQ8CYImcatKjM3JDx5ykBYb9EQeQSZcKIhY6llq4
-         plugins:
-          - vertamedia-clickhouse-datasource
-          - grafana-clickhouse-datasource
+        object:
+          persistence:
+            enabled: true
+            size: 10Gi
+          plugins:
+            - grafana-clickhouse-datasource

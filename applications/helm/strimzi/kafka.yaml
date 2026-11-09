@@ -1,14 +1,22 @@
+# Kafka with Strimzi, from the manifests in resources/
+#
+# A one-node Kafka cluster in KRaft mode with ephemeral storage, and the topic
+# test-topic. More examples:
+# https://github.com/strimzi/strimzi-kafka-operator/tree/0.43.0/examples/kafka
+#
+# Before you apply: strimzi.yaml.
+#
+# Apply: astroctl app apply -f kafka.yaml
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
-  name: kafka-cluster
-  profileName:  profile3
+  name: strimzi-kafka
+  profileName: <YOUR_PROFILE_NAME>
   namespace: strimzi-kafka
   source:
     type: YAML
-    yaml: 
-      repo: 
-        path: resources/strimzi
+    yaml:
+      repo:
         repoURL: https://github.com/astropulseinc/astro-platform-apps.git
         targetRevision: main
-      exclude: "*.md"
+        path: applications/helm/strimzi/resources
