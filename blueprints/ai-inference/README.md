@@ -57,7 +57,14 @@ astroctl infra k8s addons apply -f add-ons/cert-manager.yaml
 
 ## Check it
 
-With the production issuer in place:
+After the switch, cert-manager re-issues the certificate while the staging one
+keeps serving. Wait until the cluster reports trusted certificates:
+
+```bash
+astroctl infra k8s exposure get <YOUR_CLUSTER_NAME>
+```
+
+Then:
 
 ```bash
 astroctl app get qwen-chat

@@ -17,7 +17,6 @@ runtime, checks the cluster can hold the model, and scales its replicas.
 `gpu.yaml`, `api-keys-endpoint.yaml` and `jwt-endpoint.yaml` all deploy
 `qwen-chat`: applying one updates the model the previous one deployed.
 
-
 | Needed for | What |
 |---|---|
 | every file | A profile ([`../../profiles/`](../../profiles/)); the `cert-manager` and `model-serving` add-ons |

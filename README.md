@@ -54,11 +54,15 @@ Replace every value in angle brackets before you apply a file.
 | `<YOUR_AWS_ACCOUNT_ID>` | Your 12-digit AWS account ID |
 | `<YOUR_GCP_PROJECT_ID>` | Your Google Cloud project ID |
 | `<YOUR_SUBSCRIPTION_ID>`, `<YOUR_RESOURCE_GROUP>` | Your Azure subscription ID and resource group |
-| `<YOUR_VPC_ID>`, `<YOUR_PUBLIC_SUBNET_A>`, `<YOUR_PRIVATE_SUBNET_A>` | An existing network and its subnets |
+| `<YOUR_VPC_ID>`, `<YOUR_PUBLIC_SUBNET_A>` to `_C`, `<YOUR_PRIVATE_SUBNET_A>` to `_C` | An existing network and its subnets, per zone |
 | `<YOUR_BUCKET_NAME>` | The bucket a self-hosted setup command prints |
 | `<YOUR_HOSTED_ZONE_ID>` | A Route 53 hosted zone ID |
-| `<YOUR_..._ROLE>` | The name of an IAM role you created for an add-on |
+| `<YOUR_CERT_MANAGER_ROLE>`, `<YOUR_EXTERNAL_DNS_ROLE>`, `<YOUR_KARPENTER_CONTROLLER_ROLE>` | The name of an IAM role you created for that add-on |
+| `<YOUR_CONTEXT>` | A kubeconfig context (`kubectl config get-contexts`) |
 | `<YOUR_GITHUB_ORG>` | Your GitHub organization or user, for a fork of this repository and its container registry |
+| `<YOUR_GITHUB_USER>`, `<YOUR_REGISTRY_TOKEN>` | The account and token your builds push images with |
+| `<YOUR_API_KEY>`, `<YOUR_TOKEN>` | A key or token an access policy accepts, when you call a model |
+| `$HF_TOKEN` | Your Hugging Face access token, in an environment variable |
 | `example.com` | A domain you own and have verified in AstroPulse (Integrations > Domains) |
 | `platform@example.com` | An email address that receives certificate notices |
 
