@@ -7,7 +7,7 @@
 #   astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
 # Apply: astroctl infra k8s apply -f autopilot.yaml --dry-run, then without --dry-run
-# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/gke
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:

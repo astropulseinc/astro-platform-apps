@@ -1,49 +1,23 @@
-# AWS Self-Hosted Kubernetes
+# Self-hosted Kubernetes on AWS
 
-Platform-managed Kubernetes on AWS EC2 instances. The platform handles cluster lifecycle, upgrades, and scaling automatically.
+[`new-vpc.yaml`](new-vpc.yaml) creates a Kubernetes cluster on EC2 instances
+that AstroPulse installs and manages: a control-plane node and a group of
+workers. Set `networkId` to use an existing VPC instead.
 
-## Template
+## Before you apply
 
-| File | Description |
-|------|-------------|
-| [aws.yaml](aws.yaml) | Self-hosted K8s cluster on AWS |
-
-## Prerequisites
-
-1. Install [astroctl CLI](https://astropulse.io/get-started): `curl -fsSL https://astropulse.io/install.sh | bash`
-2. [AWS CLI](https://docs.aws.amazon.com/cli/) for initial setup
-
-## Quick Start
+Set up the account once; the setup prints the bucket name for `bucketName`:
 
 ```bash
-# 1. Automated setup (handles all resource provisioning)
-astroctl cloud aws selfHosted setup \
-  --account-id <your-aws-account-id> \
-  --region us-west-2 \
-  --cluster-name my-cluster
-
-# 2. Edit aws.yaml with the values from the setup output
-#    - accountId: your AWS account ID
-#    - bucketName: from the setup output
-
-# 3. Deploy the cluster
-astroctl infra k8s apply -f aws.yaml
-
-# 4. Monitor progress
-astroctl infra k8s progress stream my-cluster
-
-# 5. Access the cluster
-astroctl infra k8s set-context my-cluster
+astroctl cloud aws selfHosted setup --account-id <YOUR_AWS_ACCOUNT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
+astroctl cloud aws selfHosted connect --cluster-name <YOUR_CLUSTER_NAME>
 ```
 
-## Configuration
+## Apply
 
-| Field | Description | Source |
-|-------|-------------|--------|
-| `accountId` | AWS account ID (12 digits) | `aws sts get-caller-identity` |
-| `bucketName` | State storage bucket | From setup output |
-| `credentials.type` | Always `vault` | Managed by platform |
+```bash
+astroctl infra k8s apply -f new-vpc.yaml --dry-run
+astroctl infra k8s apply -f new-vpc.yaml
+```
 
-## Documentation
-
-Full documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted
+Docs: [Self-hosted on AWS](https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/self-hosted/aws)

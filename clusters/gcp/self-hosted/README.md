@@ -1,49 +1,23 @@
-# GCP Self-Hosted Kubernetes
+# Self-hosted Kubernetes on Google Cloud
 
-Platform-managed Kubernetes on GCP Compute Engine instances. The platform handles cluster lifecycle, upgrades, and scaling automatically.
+[`new-vpc.yaml`](new-vpc.yaml) creates a Kubernetes cluster on Compute Engine
+instances that AstroPulse installs and manages: a control-plane node and a
+group of Spot workers. Set `networkId` to use an existing VPC network instead.
 
-## Template
+## Before you apply
 
-| File | Description |
-|------|-------------|
-| [gcp.yaml](gcp.yaml) | Self-hosted K8s cluster on GCP |
-
-## Prerequisites
-
-1. Install [astroctl CLI](https://astropulse.io/get-started): `curl -fsSL https://astropulse.io/install.sh | bash`
-2. [Google Cloud CLI](https://cloud.google.com/sdk/docs) for initial setup
-
-## Quick Start
+Set up the project once; the setup prints the bucket name for `bucketName`:
 
 ```bash
-# 1. Automated setup (handles all resource provisioning)
-astroctl cloud gcp selfHosted setup \
-  --project-id <your-gcp-project-id> \
-  --region us-central1 \
-  --cluster-name my-cluster
-
-# 2. Edit gcp.yaml with the values from the setup output
-#    - accountId: your GCP project ID
-#    - bucketName: from the setup output
-
-# 3. Deploy the cluster
-astroctl infra k8s apply -f gcp.yaml
-
-# 4. Monitor progress
-astroctl infra k8s progress stream my-cluster
-
-# 5. Access the cluster
-astroctl infra k8s set-context my-cluster
+astroctl cloud gcp selfHosted setup --project-id <YOUR_GCP_PROJECT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
+astroctl cloud gcp selfHosted connect --cluster-name <YOUR_CLUSTER_NAME>
 ```
 
-## Configuration
+## Apply
 
-| Field | Description | Source |
-|-------|-------------|--------|
-| `accountId` | GCP project ID | `gcloud config list --format="value(core.project)"` |
-| `bucketName` | State storage bucket | From setup output |
-| `credentials.type` | Always `vault` | Managed by platform |
+```bash
+astroctl infra k8s apply -f new-vpc.yaml --dry-run
+astroctl infra k8s apply -f new-vpc.yaml
+```
 
-## Documentation
-
-Full documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/self-hosted
+Docs: [Self-hosted on Google Cloud](https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/self-hosted/gcp)

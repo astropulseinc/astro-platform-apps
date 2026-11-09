@@ -1,60 +1,27 @@
-# AKS (Azure Kubernetes Service) Templates
+# Azure AKS
 
-Production-ready templates for deploying and managing AKS clusters.
+[`new-vnet.yaml`](new-vnet.yaml) creates an AKS cluster in a new virtual
+network, with one system node pool. The first node group is the system pool:
+its name is lowercase letters and digits, at most 12 characters, and it runs
+OnDemand.
 
-## Prerequisites
+## Before you apply
 
-Before deploying an AKS cluster, connect your Azure subscription:
-
-```bash
-astroctl cloud azure connect \
-  --subscription-id <your-subscription-id> \
-  --resource-group <your-resource-group> \
-  --cluster-name <cluster-name> \
-  --region <region>
-```
-
-This grants the platform secure access to your Azure subscription.
-
-## Template
-
-| File | Description | Use Case |
-|------|-------------|----------|
-| [byoa.yaml](byoa.yaml) | AKS cluster with dynamic credentials | Standard production clusters |
-
-## Quick Start
+Connect your subscription, then run the script the command saves:
 
 ```bash
-# 1. Get your Azure subscription ID
-az account show --query id --output tsv
-
-# 2. Connect your Azure subscription
-astroctl cloud azure connect \
-  --subscription-id <subscription-id> \
-  --resource-group <resource-group> \
-  --cluster-name my-aks-cluster \
-  --region eastus
-
-# 3. Edit byoa.yaml with your subscription ID and resource group
-
-# 4. Deploy the cluster
-astroctl infra k8s apply -f byoa.yaml
-
-# 5. Monitor progress
-astroctl infra k8s progress stream my-aks-cluster
-
-# 6. Access the cluster
-astroctl infra k8s set-context my-aks-cluster
+az account show --query id -o tsv   # your subscription ID
+az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>   # if you need one
+astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 ```
 
-## Configuration
+## Apply
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `subscriptionId` | Azure Subscription ID (UUID) | `00000000-0000-0000-0000-000000000000` |
-| `resourceGroup` | Azure Resource Group name | `rg-astro-production` |
-| `credentials.type` | Authentication type | `dynamic` (recommended) |
+```bash
+astroctl infra k8s apply -f new-vnet.yaml --dry-run
+astroctl infra k8s apply -f new-vnet.yaml
+```
 
-## Documentation
+In the console: Infrastructure > Kubernetes, then **New cluster**.
 
-Full documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
+Docs: [AKS](https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/aks)

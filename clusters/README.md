@@ -1,55 +1,28 @@
-# Cluster Templates
+# Clusters
 
-Ready-to-use YAML templates for deploying Kubernetes clusters across AWS, GCP, and Azure. You can also register any existing cluster.
+Create a Kubernetes cluster with AstroPulse, or register one you already run.
 
-## Providers
+In the console: Infrastructure > Kubernetes, then **New cluster**.
 
-| Provider | Directory | Templates | Description |
-|----------|-----------|-----------|-------------|
-| AWS | [aws/](./aws/) | EKS, Self-Hosted | Managed EKS or platform-managed clusters |
-| GCP | [gcp/](./gcp/) | GKE, GKE Autopilot, Self-Hosted | Managed GKE (Standard or Autopilot) or platform-managed clusters |
-| Azure | [azure/](./azure/) | AKS | Managed AKS clusters |
-| Any | [byok/](./byok/) | Register | Register any existing Kubernetes cluster |
+| Folder | Cluster |
+|---|---|
+| [`aws/eks/`](aws/eks/) | Amazon EKS: new VPC, existing VPC, GPU node group, node group update |
+| [`aws/self-hosted/`](aws/self-hosted/) | Kubernetes on EC2 instances AstroPulse manages |
+| [`gcp/gke/`](gcp/gke/) | Google GKE Standard and Autopilot: new VPC, existing VPC, GPU node group, node group update |
+| [`gcp/self-hosted/`](gcp/self-hosted/) | Kubernetes on Compute Engine instances AstroPulse manages |
+| [`azure/aks/`](azure/aks/) | Azure AKS in a new virtual network |
+| [`register/`](register/) | Any existing cluster: EKS, GKE, AKS, on-premises or local |
 
-## Quick Start
+## Apply
+
+A new cluster needs your cloud account connected first; each folder's README
+gives the command. Then:
 
 ```bash
-# 1. Install CLI
-curl -fsSL https://astropulse.io/install.sh | bash
-
-# 2. Login
-astroctl auth login
-
-# 3. Connect your cloud account
-astroctl cloud aws connect --account-id <id> --cluster-name my-cluster --region us-east-1
-
-# 4. Deploy a cluster (update the YAML with your values first)
-astroctl infra k8s apply -f aws/eks/byoa.yaml
-
-# 5. Monitor progress
-astroctl infra k8s progress stream my-cluster
-
-# 6. Access the cluster
-astroctl infra k8s set-context my-cluster
+astroctl infra k8s apply -f aws/eks/new-vpc.yaml --dry-run   # checks the account, quota and settings
+astroctl infra k8s apply -f aws/eks/new-vpc.yaml
+astroctl infra k8s progress stream <YOUR_CLUSTER_NAME>
+astroctl infra k8s set-context <YOUR_CLUSTER_NAME>            # kubectl access
 ```
 
-## All Templates
-
-| File | Provider | Type | Description |
-|------|----------|------|-------------|
-| [aws/eks/byoa.yaml](aws/eks/byoa.yaml) | AWS | EKS | Standard EKS cluster with dynamic credentials |
-| [aws/eks/byo-vpc.yaml](aws/eks/byo-vpc.yaml) | AWS | EKS | EKS with existing VPC |
-| [aws/eks/eks-update.yaml](aws/eks/eks-update.yaml) | AWS | EKS | Update an existing EKS cluster |
-| [aws/vanilla-k8s/aws.yaml](aws/vanilla-k8s/aws.yaml) | AWS | Self-Hosted | Platform-managed K8s on EC2 |
-| [gcp/gke/cluster.yaml](gcp/gke/cluster.yaml) | GCP | GKE | Standard GKE cluster with dynamic credentials |
-| [gcp/gke/autopilot.yaml](gcp/gke/autopilot.yaml) | GCP | GKE Autopilot | Fully managed (no node management) |
-| [gcp/gke/byovpc.yaml](gcp/gke/byovpc.yaml) | GCP | GKE | GKE with existing VPC |
-| [gcp/gke/update.yaml](gcp/gke/update.yaml) | GCP | GKE | Update an existing GKE cluster |
-| [gcp/vanilla-k8s/gcp.yaml](gcp/vanilla-k8s/gcp.yaml) | GCP | Self-Hosted | Platform-managed K8s on Compute Engine |
-| [azure/aks/byoa.yaml](azure/aks/byoa.yaml) | Azure | AKS | Standard AKS cluster with dynamic credentials |
-| [byok/register.yaml](byok/register.yaml) | Any | Registration | Register any existing cluster |
-
-## Documentation
-
-- [Cluster Management](https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-mgmt)
-- [Get Started](https://astropulse.io/get-started)
+Docs: [Cluster management](https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-mgmt)

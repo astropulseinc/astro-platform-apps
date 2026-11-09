@@ -1,8 +1,7 @@
 # Grafana, from its Helm chart
 #
-# The admin password is generated into the Secret `grafana` in the
-# `monitoring` namespace:
-#   kubectl -n monitoring get secret grafana -o jsonpath='{.data.admin-password}' | base64 -d
+# The chart generates the admin password into a Secret in the `monitoring`
+# namespace; README.md shows how to read it.
 #
 # The volume uses the cluster's default StorageClass; set
 # persistence.storageClassName if the cluster has none.

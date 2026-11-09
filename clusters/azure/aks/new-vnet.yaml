@@ -8,7 +8,7 @@
 #        astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
 # Apply: astroctl infra k8s apply -f new-vnet.yaml --dry-run, then without --dry-run
-# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/aks
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/aks
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:

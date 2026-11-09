@@ -8,7 +8,7 @@
 #        astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 #
 # Apply: astroctl infra k8s apply -f existing-vpc.yaml --dry-run, then without --dry-run
-# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/eks
 apiVersion: platform.astropulse.io/v1
 kind: K8sCluster
 spec:

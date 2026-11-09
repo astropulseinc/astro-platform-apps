@@ -1,56 +1,49 @@
-# Managed Cluster Add-ons
+# Add-ons
 
-Platform-curated versions of the Kubernetes ecosystem apps most clusters need —
-ingress, DNS automation, TLS certificates, and node autoscaling — installed,
-upgraded, and monitored with **one command** on any AstroPulse cluster
-(provisioned or registered).
+Managed add-ons install the Kubernetes components most clusters need. You set
+a few typed options; AstroPulse picks the chart and version, installs it into
+its own namespace, upgrades it and reports its health. Add-on files never hold
+cloud credentials: an add-on that calls a cloud API runs as a workload identity
+you name, or reads a Secret you create.
 
-You declare **intent** (which add-on + a few typed options). AstroPulse owns the
-chart, the version, the deployment lifecycle, and health. You never handle Helm
-values, and the add-on configuration never contains cloud credentials.
+In the console: Infrastructure > Kubernetes, open the cluster, then its
+**Add-ons** tab.
 
-> Prefer a UI? Manage the same add-ons from the [Astro Console](https://astropulse.io/console)
-> cluster page. Full docs:
-> [Cluster Add-ons](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons).
+| File | Add-on | What it does |
+|---|---|---|
+| [`nginx-ingress.yaml`](nginx-ingress.yaml) | Ingress | Routes outside traffic to image applications |
+| [`cert-manager.yaml`](cert-manager.yaml) | Certificates | Let's Encrypt or self-signed certificates over HTTP-01 |
+| [`cert-manager-letsencrypt-dns.yaml`](cert-manager-letsencrypt-dns.yaml) | Certificates | Let's Encrypt over DNS-01, for the gateway and wildcard certificates |
+| [`external-dns.yaml`](external-dns.yaml) | DNS Automation | Publishes DNS records for application and model hostnames |
+| [`karpenter.yaml`](karpenter.yaml) | Node Autoscaling | Adds and removes nodes as demand changes (AWS) |
+| [`karpenter-gpu-pool.yaml`](karpenter-gpu-pool.yaml) | Node Autoscaling | The same, with a GPU node pool capped by `gpuLimit` |
+| [`workload-autoscaling.yaml`](workload-autoscaling.yaml) | Workload Autoscaling | Scales applications, and models on waiting requests |
+| [`cost-visibility.yaml`](cost-visibility.yaml) | Cost Visibility | Usage and cost per application and model |
+| [`vulnerability-scanning.yaml`](vulnerability-scanning.yaml) | Vulnerability Scanning | Known vulnerabilities in running images |
+| [`model-serving.yaml`](model-serving.yaml) | Model Serving | Serves model applications behind an OpenAI-compatible API |
+| [`gateway.yaml`](gateway.yaml) | Gateway | HTTPS for model endpoints, with access policies enforced |
+| [`workload-queueing.yaml`](workload-queueing.yaml) | Workload Queueing | GPU quotas shared between teams and models |
+| [`accelerator-metrics.yaml`](accelerator-metrics.yaml) | Accelerator Metrics | GPU utilization, memory and power per application |
 
-## Examples
-
-| File | Add-on | Namespace | Notes |
-|---|---|---|---|
-| [`nginx-ingress.yaml`](nginx-ingress.yaml) | NGINX Ingress | `ingress-nginx` | TLS terminated at the controller; pair with cert-manager |
-| [`external-dns.yaml`](external-dns.yaml) | ExternalDNS | `external-dns` | **Requires cluster-side DNS identity** (IRSA / Workload Identity) |
-| [`cert-manager.yaml`](cert-manager.yaml) | cert-manager | `cert-manager` | Installs CRDs; optional Let's Encrypt ClusterIssuer |
-| [`karpenter.yaml`](karpenter.yaml) | Karpenter | `kube-system` | AWS only; cluster-managed on EKS |
-
-Each add-on installs into its **own dedicated namespace** (created automatically).
+Some add-ons need others first: model-serving and gateway need cert-manager,
+and workload-autoscaling reads metrics from cost-visibility's Prometheus.
 
 ## Apply
 
+Replace `<YOUR_CLUSTER_NAME>` and the other placeholders, then:
+
 ```bash
-# Install or update (declarative + idempotent — edit and re-apply to change):
-astroctl infra k8s addons apply -f nginx-ingress.yaml
-
-# Watch it converge, then observe:
-astroctl infra k8s addons status  <cluster> nginx-ingress
-astroctl infra k8s addons get     <cluster>
-astroctl infra k8s addons logs    <cluster> nginx-ingress
-astroctl infra k8s addons events  <cluster> nginx-ingress
-astroctl infra k8s addons history <cluster> nginx-ingress
-
-# Upgrade / roll back / uninstall:
-astroctl infra k8s addons versions <cluster> cert-manager
-astroctl infra k8s addons rollback <cluster> cert-manager
-astroctl infra k8s addons delete   <cluster> cert-manager
+astroctl infra k8s addons apply -f cert-manager.yaml --dry-run   # checks the settings against the cluster
+astroctl infra k8s addons apply -f cert-manager.yaml
+astroctl infra k8s addons get <YOUR_CLUSTER_NAME>
+astroctl infra k8s addons status <YOUR_CLUSTER_NAME> cert-manager
 ```
 
-Edit `spec.version` or the `configuration` in any file and re-apply to upgrade or
-reconfigure in place.
+Edit a file and apply it again to change the add-on. Each file holds one
+add-on. To see every setting an add-on accepts on your cluster:
 
-## Cloud identity (ExternalDNS and Karpenter)
+```bash
+astroctl infra k8s addons template <YOUR_CLUSTER_NAME> gateway
+```
 
-These add-ons reach cloud APIs with the **cluster's own identity** — IRSA on AWS,
-Workload Identity on GCP/Azure — which you set up out of band. AstroPulse never
-receives or stores cloud credentials. If you need to authenticate with a static
-key/Secret instead, deploy the app yourself (see [`../apps/external-dns/`](../apps/external-dns))
-rather than using the managed add-on. Per-provider setup is in the
-[add-on docs](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons#externaldns-dns-automation).
+Docs: [Cluster add-ons](https://astropulse.io/docs/latest/platform/cluster-pipeline/add-ons)

@@ -1,103 +1,35 @@
-# GKE (Google Kubernetes Engine) Templates
+# Google GKE
 
-Production-ready templates for deploying and managing GKE clusters.
+| File | Creates |
+|---|---|
+| [`new-vpc.yaml`](new-vpc.yaml) | A GKE Standard cluster in a new VPC with one node group |
+| [`existing-vpc.yaml`](existing-vpc.yaml) | A GKE Standard cluster in a VPC network you already have |
+| [`autopilot.yaml`](autopilot.yaml) | A GKE Autopilot cluster: Google runs the nodes |
+| [`gpu-node-group.yaml`](gpu-node-group.yaml) | A GKE Standard cluster with a platform node group and an NVIDIA L4 GPU node group |
+| [`update-node-groups.yaml`](update-node-groups.yaml) | A change to an existing cluster's node groups and tags |
 
-## Prerequisites
+## Before you apply
 
-Before deploying a GKE cluster, you must connect your GCP account:
-
-```bash
-astroctl cloud gcp connect \
-  --project-id <your-gcp-project-id> \
-  --cluster-name <cluster-name> \
-  --region <region>
-```
-
-This grants the platform secure access to your GCP project.
-
-## Templates
-
-| Template | Description | Use Case |
-|----------|-------------|----------|
-| `cluster.yaml` | Basic GKE cluster with dynamic credentials | Standard production clusters |
-| `byovpc.yaml` | GKE with Bring Your Own VPC | Existing network infrastructure |
-| `autopilot.yaml` | GKE Autopilot (fully managed) | Hands-off node management |
-| `update.yaml` | Cluster update configuration | Modify existing clusters |
-
-## Quick Start
-
-### 1. Basic GKE Cluster
+Enable the GKE API and connect your project once:
 
 ```bash
-# Edit cluster.yaml with your project ID and settings
-astroctl infra k8s apply -f cluster.yaml
+gcloud config get-value project   # your project ID
+gcloud services enable container.googleapis.com --project <YOUR_GCP_PROJECT_ID>
+astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 ```
 
-### 2. GKE with Existing VPC (BYOVPC)
+For `existing-vpc.yaml`, the subnet needs two secondary IP ranges, one for pods
+and one for services. For `gpu-node-group.yaml`, check the region has GPUs you
+have quota for: `astroctl cloud gcp accelerators list -r <YOUR_REGION>`.
 
-First, ensure your VPC has the required subnet configuration:
+## Apply
 
 ```bash
-# Create subnet with secondary ranges (run in your GCP project)
-gcloud compute networks subnets create gke-subnet \
-  --network=my-vpc \
-  --region=us-central1 \
-  --range=10.0.0.0/20 \
-  --secondary-range=pods=10.4.0.0/14 \
-  --secondary-range=services=10.0.16.0/20 \
-  --enable-private-ip-google-access \
-  --project=my-gcp-project-123
+astroctl infra k8s apply -f new-vpc.yaml --dry-run
+astroctl infra k8s apply -f new-vpc.yaml
+astroctl infra k8s update <YOUR_CLUSTER_NAME> -f update-node-groups.yaml --dry-run
 ```
 
-Then deploy:
+In the console: Infrastructure > Kubernetes, then **New cluster**.
 
-```bash
-astroctl infra k8s apply -f byovpc.yaml
-```
-
-### 3. GKE Autopilot
-
-```bash
-astroctl infra k8s apply -f autopilot.yaml
-```
-
-### 4. Update Existing Cluster
-
-```bash
-astroctl infra k8s update <cluster-name> -f update.yaml
-```
-
-## Configuration Reference
-
-### Required Fields
-
-| Field | Description | Example |
-|-------|-------------|---------|
-| `projectId` | GCP project ID (6-30 chars, lowercase) | `my-project-123` |
-| `credentials.type` | Authentication type | `dynamic` (recommended) |
-
-### BYOVPC Fields
-
-| Field | Description | Format |
-|-------|-------------|--------|
-| `networkId` | VPC network name | 1-63 lowercase chars, starts with letter |
-| `subnet.name` | Regional subnet name | 1-63 lowercase chars, starts with letter |
-| `subnet.podsRange` | Secondary range name for pods | 1-63 lowercase chars |
-| `subnet.servicesRange` | Secondary range name for services | 1-63 lowercase chars |
-
-### Network Configuration
-
-| Field | Description | Default |
-|-------|-------------|---------|
-| `masterIPv4CidrBlock` | Control plane CIDR | `172.16.0.0/28` |
-| `authorizedNetworks` | API access CIDRs (max 50) | RFC 1918 ranges |
-
-### CIDR Requirements
-
-- **masterIPv4CidrBlock**: Must be exactly `/28`, RFC 1918 range
-- **authorizedNetworks**: Valid CIDR format, max 50 entries
-- **networkCIDR**: RFC 1918 private range (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
-
-## Documentation
-
-Full documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/gke
+Docs: [GKE](https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/gke)

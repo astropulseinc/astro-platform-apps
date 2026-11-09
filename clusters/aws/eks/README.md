@@ -1,93 +1,38 @@
-# EKS (Amazon Elastic Kubernetes Service) Templates
+# Amazon EKS
 
-Production-ready templates for deploying and managing EKS clusters.
+| File | Creates |
+|---|---|
+| [`new-vpc.yaml`](new-vpc.yaml) | An EKS cluster in a new VPC with one managed node group |
+| [`existing-vpc.yaml`](existing-vpc.yaml) | An EKS cluster in a VPC you already have |
+| [`gpu-node-group.yaml`](gpu-node-group.yaml) | An EKS cluster with a platform node group and an NVIDIA L4 GPU node group |
+| [`update-node-groups.yaml`](update-node-groups.yaml) | A change to an existing cluster's node groups and tags |
 
-## Prerequisites
+## Before you apply
 
-Before deploying an EKS cluster, you must connect your AWS account:
-
-```bash
-astroctl cloud aws connect \
-  --account-id <your-aws-account-id> \
-  --cluster-name <cluster-name> \
-  --region <region>
-```
-
-This grants the platform secure access to your AWS account.
-
-## Templates
-
-| Template | Description | Use Case |
-|----------|-------------|----------|
-| `eks.yaml` | Basic EKS cluster with dynamic credentials | Standard production clusters |
-| `eks-byovpc.yaml` | EKS with Bring Your Own VPC | Existing network infrastructure |
-| `eks-update.yaml` | Cluster update configuration | Modify existing clusters |
-
-## Quick Start
-
-### 1. Basic EKS Cluster
+Connect your AWS account once per account and region. The command writes a
+CloudFormation stack for you to deploy:
 
 ```bash
-# Edit eks.yaml with your account ID and settings
-astroctl infra k8s apply -f eks.yaml
+aws sts get-caller-identity --query Account --output text   # your account ID
+astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
 ```
 
-### 2. EKS with Existing VPC (BYOVPC)
+For `existing-vpc.yaml`, list one public and one private subnet for every
+availability zone in the region. `astroctl cloud aws generate-vpc` writes a
+template for such a VPC.
 
-Ensure your VPC has:
-- Subnets in at least 2 availability zones
-- Public subnets tagged with `kubernetes.io/role/elb=1`
-- Private subnets tagged with `kubernetes.io/role/internal-elb=1`
-- All subnets tagged with `kubernetes.io/cluster/<cluster-name>=shared`
+For `gpu-node-group.yaml`, check the region has GPUs you have quota for:
+`astroctl cloud aws accelerators list -r <YOUR_REGION>`. To launch GPU nodes only
+while models need them, use [`../../../add-ons/karpenter-gpu-pool.yaml`](../../../add-ons/karpenter-gpu-pool.yaml) instead.
+
+## Apply
 
 ```bash
-astroctl infra k8s apply -f eks-byovpc.yaml
+astroctl infra k8s apply -f new-vpc.yaml --dry-run
+astroctl infra k8s apply -f new-vpc.yaml
+astroctl infra k8s update <YOUR_CLUSTER_NAME> -f update-node-groups.yaml --dry-run
 ```
 
-### 3. Update Existing Cluster
+In the console: Infrastructure > Kubernetes, then **New cluster**.
 
-```bash
-astroctl infra k8s update <cluster-name> -f eks-update.yaml
-```
-
-## Configuration Reference
-
-### Required Fields
-
-| Field | Description | Example |
-|-------|-------------|---------|
-| `accountId` | AWS account ID (12 digits) | `123456789012` |
-| `credentials.type` | Authentication type | `dynamic` (recommended) |
-
-### BYOVPC Fields
-
-| Field | Description | Notes |
-|-------|-------------|-------|
-| `vpcId` | VPC ID | `vpc-0123456789abcdef0` |
-| `vpcCIDR` | VPC CIDR block | `192.168.0.0/16` |
-| `subnets` | Map of AZ to subnet list | Must include public and/or private subnets |
-
-### Subnet Configuration
-
-Each availability zone requires a list of subnets:
-
-```yaml
-subnets:
-  us-east-1a:
-    - type: public
-      id: subnet-xxx
-      cidr: "10.0.1.0/24"
-    - type: private
-      id: subnet-yyy
-      cidr: "10.0.2.0/24"
-```
-
-## Features
-
-- **Karpenter**: Automatically enabled for intelligent node autoscaling
-- **Managed Node Groups**: AWS-managed node lifecycle
-- **Pod-to-AWS Authentication**: Secure workload identity for pods
-
-## Documentation
-
-Full documentation: https://astropulse.io/docs/latest/platform/cluster-pipeline/provisioner/managed/eks
+Docs: [EKS](https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/eks)

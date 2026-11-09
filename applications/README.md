@@ -1,60 +1,33 @@
-# Application Examples
+# Applications
 
-Ready-to-use application deployment templates. Each application is deployed using `astroctl app apply`.
+An application is one thing AstroPulse deploys and keeps in sync: a container
+image, a Helm chart, plain manifests, a chart in Git, or a model. The folders
+follow the source types.
 
-## Applications
+| Folder | `source.type` | Examples |
+|---|---|---|
+| [`image/`](image/) | `Image` | A container image, inside the cluster or on your domain |
+| [`helm/`](helm/) | `Helm` | Third-party charts: Prometheus, Grafana, Kafka, ClickHouse and more |
+| [`yaml/`](yaml/) | `YAML` | Plain Kubernetes manifests from a Git folder |
+| [`repository/`](repository/) | `Repository` | A Helm chart kept in Git |
+| [`model/`](model/) | `Model` | Hugging Face models on CPU or GPU, on your domain behind an access policy |
 
-| Directory | Application | Type | Description |
-|-----------|------------|------|-------------|
-| [hello-world/](hello-world/) | Hello World | Image | Simple test application to verify your setup |
-| [nginx/](nginx/) | NGINX Ingress | Helm | Kubernetes ingress controller for external access |
-| [cert-manager/](cert-manager/) | Cert-Manager | Helm | Automatic TLS certificate management |
-| [external-dns/](external-dns/) | External DNS | Helm | Automatic DNS record creation (AWS/GCP) |
-| [grafana/](grafana/) | Grafana | Helm | Monitoring dashboards and visualization |
-| [prometheus/](prometheus/) | Prometheus | Helm | Metrics collection and alerting |
-| [clickhouse/](clickhouse/) | ClickHouse | Helm | Column-oriented data warehouse |
-| [external-secret/](external-secret/) | External Secrets | Helm | Cloud secret manager integration |
-| [confluent-kafka/](confluent-kafka/) | Confluent Kafka | Helm | Kafka streaming platform (Confluent) |
-| [strimzi/](strimzi/) | Strimzi Kafka | Helm | Kafka streaming platform (Strimzi) |
-| [opentelemetry/](opentelemetry/) | OpenTelemetry | Helm | Distributed tracing and metrics collection |
-| [kube-state-metrics/](kube-state-metrics/) | Kube State Metrics | Helm | Kubernetes cluster metrics exporter |
+Every application names a profile in `profileName`; create one first from
+[`../profiles/`](../profiles/).
 
-## Quick Start
+## Apply
 
 ```bash
-# Deploy an application profile first (required)
-astroctl app profile apply -f ../app-profiles/profile3.yaml
-
-# Deploy an application
-astroctl app apply -f hello-world/demo.yaml
-
-# Check status
+astroctl app apply -f image/hello-world.yaml --dry-run
+astroctl app apply -f image/hello-world.yaml
 astroctl app status hello-world
-
-# View logs
+astroctl app events hello-world
 astroctl app logs hello-world
-
-# Access locally via port-forward
-astroctl infra k8s set-context <cluster-name>
-kubectl -n <namespace> port-forward svc/<app> 8080:80
 ```
 
-## Debugging
+In the console: Workloads > Applications, or Workloads > Models for models.
 
-```bash
-# Check CI/CD events
-astroctl app events <app-name>
+AstroPulse sets up outside access only for image and model applications
+(`externalAccess`). Charts and manifests bring their own Services and Ingresses.
 
-# Check Kubernetes events
-astroctl app events <app-name> -k
-
-# Check logs
-astroctl app logs <app-name>
-
-# Check status
-astroctl app status <app-name>
-```
-
-## Documentation
-
-- [Application Deployment](https://astropulse.io/docs/latest/platform/application-pipeline/app-deployment)
+Docs: [Applications](https://astropulse.io/docs/latest/platform/application-pipeline/application-resource/overview)
