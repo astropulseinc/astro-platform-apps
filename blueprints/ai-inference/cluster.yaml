@@ -1,0 +1,33 @@
+# The EKS cluster: three small platform nodes that never scale down, and no
+# GPU until a model needs one (the GPU node pool in add-ons/karpenter.yaml).
+#
+# Before you apply, connect the account:
+#   astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f cluster.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: aws
+  region: <YOUR_REGION>
+  provisioner:
+    type: eks
+    eks:
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
+      kubernetesVersion: "1.36"        # GPU nodes need 1.36 or later
+      credentials:
+        type: Dynamic
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: system
+          minNode: 1
+          maxNode: 1
+          instanceType: OnDemand
+          machineTypes: [m6i.large]
+        - name: platform
+          minNode: 2
+          maxNode: 2
+          instanceType: Spot
+          machineTypes: [m6i.large, m5.large, m6a.large, m7i.large]

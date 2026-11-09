@@ -11,4 +11,4 @@ spec:
       repo:
         repoURL: https://github.com/astropulseinc/astro-platform-apps.git
         targetRevision: main
-        path: paas-platform-example/resources/kpack-release
+        path: blueprints/developer-platform/resources/kpack-release

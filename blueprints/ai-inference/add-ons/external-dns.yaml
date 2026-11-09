@@ -1,0 +1,16 @@
+# 9. DNS Automation (optional): publishes the model's DNS record. On an EKS
+#    cluster AstroPulse created it uses the cluster's own role.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: external-dns
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    externalDns:
+      provider: aws
+      domainFilter: apps.example.com
+      gatewayRoutes: true
+  options:
+    waitForReady: true
+    timeout: 15m

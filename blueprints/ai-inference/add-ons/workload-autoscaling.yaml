@@ -1,0 +1,15 @@
+# 6. Workload Autoscaling: adds model replicas when requests wait.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: workload-autoscaling
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    workloadAutoscaling:
+      metricsSource:
+        prometheus:
+          endpoint: http://cost-visibility-prometheus-server.astro-cost.svc.cluster.local:80
+  options:
+    waitForReady: true
+    timeout: 15m

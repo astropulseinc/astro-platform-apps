@@ -1,0 +1,11 @@
+# Who may call the model: tokens from your identity provider.
+#
+# Apply: astroctl access-policy apply -f access-policy.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: AccessPolicy
+metadata:
+  name: qwen-callers
+spec:
+  jwt:
+    issuer: https://identity.example.com   # exactly as the token's iss claim
+    audiences: [qwen-chat]

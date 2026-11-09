@@ -1,0 +1,18 @@
+# 3. Gateway: HTTPS on your domain, and the access policy checked before a
+#    request reaches the model.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: gateway
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    gateway:
+      exposure: Public
+      autoScaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 10
+  options:
+    waitForReady: true
+    timeout: 15m

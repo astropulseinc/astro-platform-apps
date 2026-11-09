@@ -17,7 +17,7 @@ spec:
     # modelServing:
     #   modelCache:
     #     backing: Node
-    #     nodeGroups: [gpu-pool]
+    #     nodeGroups: [gpu, astro-gpu-nodepool]   # node groups, and the GPU node pool
   options:
     waitForReady: true
     timeout: 15m

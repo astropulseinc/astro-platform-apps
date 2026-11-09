@@ -8,6 +8,6 @@ spec:
     type: YAML
     yaml:
       repo:
-        repoURL: https://github.com/your-org/astro-platform-apps.git
+        repoURL: https://github.com/<YOUR_GITHUB_ORG>/astro-platform-apps.git
         targetRevision: main
-        path: paas-platform-example/resources/kyverno
+        path: blueprints/developer-platform/resources/kyverno

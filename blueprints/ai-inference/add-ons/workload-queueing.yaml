@@ -1,0 +1,18 @@
+# 10. Workload Queueing (optional): shares the GPU pool between models under
+#     quotas. A model joins with model.queue.name: inference.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: workload-queueing
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    workloadQueueing:
+      integrations: [batch/job, deployment]
+      clusterQueues:
+        - name: inference
+          quota:
+            gpu: 4
+  options:
+    waitForReady: true
+    timeout: 15m

@@ -4,7 +4,7 @@ metadata:
   name: default
 spec:
   # Where kpack publishes the builder image: your registry.
-  tag: ghcr.io/your-org/kpack-builder
+  tag: ghcr.io/<YOUR_GITHUB_ORG>/kpack-builder
   serviceAccountRef:
     name: kpack-service-account
     namespace: kpack
