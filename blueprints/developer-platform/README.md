@@ -52,4 +52,4 @@ The policies only report (`validationActions: [Audit]`). Switch them to
 `[Deny]` once the reports are clean, and list the namespaces your services run
 in under `namespaceSelector`.
 
-Docs: [Build a path to production](https://astropulse.io/docs/examples/internal-developer-platform/path-to-production)
+Walkthrough: [From Git push to production](https://astropulse.io/docs/blog/building-modern-paas-platform-with-astropulse)
