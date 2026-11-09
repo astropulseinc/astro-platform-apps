@@ -20,7 +20,7 @@ spec:
         - name: criticals
           apiCall:
             urlPath: "/apis/aquasecurity.github.io/v1alpha1/namespaces/{{request.namespace}}/vulnerabilityreports"
-            jmesPath: "sum(items[].report.summary.criticalCount) || `0`"
+            jmesPath: "length(items[?report.summary.criticalCount > `0`])"
       validate:
         message: "An image in this namespace has CRITICAL vulnerabilities."
         deny:
