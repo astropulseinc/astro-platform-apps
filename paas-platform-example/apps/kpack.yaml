@@ -1,3 +1,4 @@
+# Reads the unmodified kpack release from this repository, so it needs no copy of its own.
 apiVersion: platform.astropulse.io/v1
 kind: Application
 spec:
