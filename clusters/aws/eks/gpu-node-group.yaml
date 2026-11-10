@@ -1,0 +1,45 @@
+# EKS cluster with a GPU node group
+#
+# A small platform node group for the cluster's own components and a GPU node
+# group for models. To launch GPU nodes only while models need them instead,
+# leave the GPU group out and use add-ons/karpenter-gpu-pool.yaml.
+#
+# Before you apply:
+#   1. GPU quota above zero in the region: list what you can run with
+#        astroctl cloud aws accelerators list --region <YOUR_REGION>
+#   2. Connect the account:
+#        astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f gpu-node-group.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: aws
+  region: <YOUR_REGION>
+  provisioner:
+    type: eks
+    eks:
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
+      kubernetesVersion: "1.36"         # GPU node groups need 1.36 or later
+      credentials:
+        type: Dynamic
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: platform
+          minNode: 2
+          maxNode: 3
+          instanceType: OnDemand
+          machineTypes:
+            - m6i.large
+        - name: gpu
+          minNode: 1
+          maxNode: 2
+          instanceType: OnDemand
+          machineTypes:
+            - g6.xlarge                # one NVIDIA L4
+          accelerator:
+            gpu:
+              model: l4
+              countPerNode: 1

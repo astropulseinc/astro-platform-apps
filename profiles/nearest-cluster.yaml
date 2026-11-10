@@ -1,0 +1,10 @@
+# Application profile: the nearest cluster
+#
+# Names neither a cluster nor a cloud: AstroPulse picks the cluster nearest
+# to your organization.
+#
+# Apply: astroctl app profile apply -f nearest-cluster.yaml
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: <YOUR_PROFILE_NAME>

@@ -1,0 +1,16 @@
+# 3. Model Serving: serves models behind an OpenAI-compatible API. Apply it
+#    after Node Autoscaling: its weight cache lives on the GPU node pool.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: model-serving
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    modelServing:
+      modelCache:
+        backing: Node
+        nodeGroups: [astro-gpu-nodepool]   # the GPU node pool keeps the weights it downloads
+  options:
+    waitForReady: true
+    timeout: 15m

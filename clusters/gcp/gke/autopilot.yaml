@@ -1,0 +1,24 @@
+# GKE Autopilot cluster
+#
+# Google manages the nodes, their scaling and their patches, and bills per pod,
+# so there are no node groups.
+#
+# Before you apply, connect the project:
+#   astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f autopilot.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/gke
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: gcp
+  region: <YOUR_REGION>
+  provisioner:
+    type: gke
+    gke:
+      projectId: "<YOUR_GCP_PROJECT_ID>"
+      autopilot: true
+      credentials:
+        type: Dynamic
+  clusterSpec: {}

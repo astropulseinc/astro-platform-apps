@@ -1,0 +1,23 @@
+# Update a GKE cluster's node groups and tags
+#
+# Lists only what changes. A node group not listed keeps its settings; a node
+# group listed with a new name is added.
+#
+# Apply: astroctl infra k8s update <YOUR_CLUSTER_NAME> -f update-node-groups.yaml --dry-run,
+#        then without --dry-run
+# See what the cluster accepts: astroctl infra k8s update <YOUR_CLUSTER_NAME> --example
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterUpdate
+spec:
+  nodeGroups:
+    - name: default-pool
+      minNode: 2
+      maxNode: 10
+      labels:
+        environment: production
+  updateConfig:
+    maxUnavailable: "1"
+    maxSurge: "1"
+  tags:
+    environment: production
+    team: platform

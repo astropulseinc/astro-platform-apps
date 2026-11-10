@@ -1,0 +1,18 @@
+# Hello world: a container image, reachable inside the cluster
+#
+# Before you apply: a profile that points at your cluster (profiles/).
+#
+# Apply:  astroctl app apply -f hello-world.yaml --dry-run, then without --dry-run
+# Check:  astroctl app status hello-world
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: hello-world
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Image
+    image:
+      registry: docker.io
+      repository: astropulse/latency
+      tag: v1.0.0
+      port: 8080

@@ -1,0 +1,17 @@
+# The kpack builder: stack, store, ClusterBuilder and the service account
+# builds push with, from resources/kpack in your fork.
+#
+# Apply: astroctl app apply -f kpack-builder.yaml (once kpack is running)
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: kpack-builder
+  profileName: platform
+  namespace: kpack
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/<YOUR_GITHUB_ORG>/astro-platform-apps.git
+        targetRevision: main
+        path: blueprints/developer-platform/resources/kpack

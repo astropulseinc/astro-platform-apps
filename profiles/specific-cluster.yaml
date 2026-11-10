@@ -1,0 +1,11 @@
+# Application profile: one named cluster
+#
+# Applications that use this profile deploy to the cluster you name.
+# List your clusters with: astroctl infra k8s get
+#
+# Apply: astroctl app profile apply -f specific-cluster.yaml
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: <YOUR_PROFILE_NAME>
+  clusterName: <YOUR_CLUSTER_NAME>

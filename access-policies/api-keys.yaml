@@ -1,0 +1,19 @@
+# Access policy: API keys
+#
+# AstroPulse creates and stores the keys. Callers send one in the
+# Authorization header (`Authorization: Bearer <key>`).
+#
+# Apply:       astroctl access-policy apply -f api-keys.yaml --dry-run, then without --dry-run
+# Create a key: astroctl access-policy key create partner-keys --label partner-a
+# Attach it:   externalAccess.accessPolicyRef.name: partner-keys on a model
+#              (applications/model/api-keys-endpoint.yaml)
+apiVersion: platform.astropulse.io/v1
+kind: AccessPolicy
+metadata:
+  name: partner-keys
+spec:
+  apiKeys:
+    managed: true
+    header: Authorization          # or x-api-key
+  allowedOrigins:                  # optional: web pages that call the endpoint from a browser
+    - https://app.example.com

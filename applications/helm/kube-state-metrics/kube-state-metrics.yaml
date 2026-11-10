@@ -1,0 +1,19 @@
+# kube-state-metrics, from its Helm chart
+#
+# Exposes metrics about the cluster's Kubernetes objects for Prometheus.
+#
+# Apply: astroctl app apply -f kube-state-metrics.yaml
+# Chart values: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: kube-state-metrics
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: monitoring
+  source:
+    type: Helm
+    helm:
+      repo:
+        repoURL: https://prometheus-community.github.io/helm-charts
+        chartName: kube-state-metrics
+        chartVersion: 5.26.0

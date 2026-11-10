@@ -1,0 +1,34 @@
+# Ingress (nginx-ingress): routes outside traffic to image applications.
+#
+# Defaults: a cloud load balancer in front of the controller, ingress class
+# `nginx`, TLS terminated at the controller. Installs into `ingress-nginx`.
+#
+# Apply: astroctl infra k8s addons apply -f nginx-ingress.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: nginx-ingress
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    nginx:
+      replicas: 2
+      # Public (the internet) or Private (only the cluster's network).
+      exposure: Public
+      # No cloud load balancer (bare metal, a local cluster)? Publish on a
+      # NodePort instead:
+      enableNodePort: false
+      autoScaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 5
+        targetCPUPercent: 80
+      # One certificate for example.com and every name one level below it,
+      # served to applications whose TLS mode is Wildcard. Needs the
+      # cert-manager add-on with a DNS solver (cert-manager-letsencrypt-dns.yaml).
+      # wildcardCertificate:
+      #   enabled: true
+      #   domain: apps.example.com
+  options:
+    waitForReady: true
+    timeout: 10m

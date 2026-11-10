@@ -1,0 +1,18 @@
+# Kafka with Confluent for Kubernetes, from the manifests in resources/
+#
+# Before you apply: confluent-operator.yaml.
+#
+# Apply: astroctl app apply -f kafka.yaml
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: confluent-kafka
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: confluent
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: applications/helm/confluent-kafka/resources

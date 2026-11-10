@@ -1,0 +1,38 @@
+# AKS cluster in a new virtual network
+#
+# Before you apply:
+#   1. Find your subscription ID:  az account show --query id -o tsv
+#   2. Create a resource group if you need one:
+#        az group create --name <YOUR_RESOURCE_GROUP> --location <YOUR_REGION>
+#   3. Connect the subscription, then run the script it saves:
+#        astroctl cloud azure connect --subscription-id <YOUR_SUBSCRIPTION_ID> --resource-group <YOUR_RESOURCE_GROUP> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f new-vnet.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/aks
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: azure
+  region: <YOUR_REGION>                # the region you connected, such as eastus
+  provisioner:
+    type: aks
+    aks:
+      subscriptionId: "<YOUR_SUBSCRIPTION_ID>"
+      resourceGroup: "<YOUR_RESOURCE_GROUP>"
+      credentials:
+        type: Dynamic
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        # The first node group is the system pool: lowercase letters and
+        # digits, at most 12 characters, and OnDemand (Azure refuses Spot there).
+        - name: systempool
+          minNode: 2
+          maxNode: 5
+          instanceType: OnDemand
+          machineTypes:
+            # List sizes: az vm list-skus --location <YOUR_REGION> --resource-type virtualMachines -o table
+            - Standard_D2s_v5
+          labels:
+            environment: dev

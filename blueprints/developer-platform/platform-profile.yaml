@@ -1,0 +1,8 @@
+# The profile the platform applications deploy through.
+#
+# Apply: astroctl app profile apply -f platform-profile.yaml
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: platform
+  clusterName: <YOUR_CLUSTER_NAME>

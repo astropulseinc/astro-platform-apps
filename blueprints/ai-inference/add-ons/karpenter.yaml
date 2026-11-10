@@ -1,0 +1,17 @@
+# 2. Node Autoscaling with its GPU node pool: GPU nodes appear for pending
+#    model replicas and are removed once empty.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: karpenter
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    karpenter:
+      enableGpuNodePool: true
+      gpuLimit: 4                       # the most GPUs you will pay for at once
+      allowedAccelerators: [l4]
+      gpuCapacityTypes: [OnDemand]
+  options:
+    waitForReady: true
+    timeout: 15m

@@ -1,0 +1,25 @@
+# Gateway: serves model endpoints over HTTPS on your domain and enforces their
+# access policies before a request reaches the model.
+#
+# Needs: cert-manager with a DNS solver (cert-manager-letsencrypt-dns.yaml).
+#
+# Apply: astroctl infra k8s addons apply -f gateway.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: gateway
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    gateway:
+      exposure: Public          # default for endpoints that name none: Public or Private
+      enableNodePort: false     # true on clusters without a cloud load balancer
+      autoScaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 10
+        metric: CPU             # CPU or RequestsPerSecond
+        targetCPUPercent: 70
+  options:
+    waitForReady: true
+    timeout: 15m

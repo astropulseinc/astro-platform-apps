@@ -1,0 +1,54 @@
+# GKE Standard cluster in an existing VPC
+#
+# Before you apply:
+#   1. A VPC network with a regional subnet that has two secondary IP ranges,
+#      one for pods and one for services.
+#   2. Connect the project:
+#        astroctl cloud gcp connect --project-id <YOUR_GCP_PROJECT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f existing-vpc.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/gke
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: gcp
+  region: <YOUR_REGION>
+  provisioner:
+    type: gke
+    gke:
+      projectId: "<YOUR_GCP_PROJECT_ID>"
+      networkId: <YOUR_VPC_ID>         # the VPC network name
+      subnet:
+        name: gke-subnet
+        podsRange: pods                # a secondary range on the subnet
+        servicesRange: services        # a secondary range on the subnet
+      masterIPv4CidrBlock: "172.16.0.0/28"   # /28, private, not used in the VPC
+      authorizedNetworks:              # who may reach the Kubernetes API
+        - "10.0.0.0/8"
+      enableWorkloadIdentity: true
+      credentials:
+        type: Dynamic
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: app-pool
+          minNode: 2
+          maxNode: 10
+          instanceType: OnDemand
+          machineTypes:
+            - e2-standard-4
+          labels:
+            tier: application
+        - name: system-pool
+          minNode: 1
+          maxNode: 3
+          instanceType: OnDemand
+          machineTypes:
+            - e2-medium
+          labels:
+            tier: system
+          taints:
+            - key: dedicated
+              value: system
+              effect: NoSchedule

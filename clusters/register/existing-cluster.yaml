@@ -1,0 +1,17 @@
+# Register an existing cluster
+#
+# Any conformant Kubernetes cluster: EKS, GKE, AKS, on-premises or local.
+# astroctl installs a small agent through your current kubectl context; the
+# agent connects out to AstroPulse, so no inbound firewall rule is needed.
+#
+# Apply: astroctl infra k8s register -f existing-cluster.yaml
+#   or:  astroctl infra k8s register --cluster-name <YOUR_CLUSTER_NAME>
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/cluster-registration
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterRegistration
+metadata:
+  name: <YOUR_CLUSTER_NAME>
+spec:
+  region: <YOUR_REGION>     # optional: detected from the cluster when left out
+  labels:                   # optional
+    environment: production

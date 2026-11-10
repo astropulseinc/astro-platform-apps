@@ -1,0 +1,24 @@
+# Cost Visibility: shows usage and cost per application, model and namespace.
+#
+# Defaults: a Prometheus of its own with 7 days of metrics, priced at the
+# cloud's published rates. To use your own rates, set `pricing: PriceSheet`
+# and a `priceSheet`; to read an existing Prometheus, set `prometheusEndpoint`.
+#
+# Apply: astroctl infra k8s addons apply -f cost-visibility.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cost-visibility
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    costVisibility:
+      metricsSource: Managed
+      pricing: Published
+      prometheus:
+        retention: 7d
+        storage:
+          size: 20Gi
+  options:
+    waitForReady: true
+    timeout: 10m

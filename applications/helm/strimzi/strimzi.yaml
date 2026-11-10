@@ -1,0 +1,23 @@
+# Strimzi Kafka operator, from its Helm chart
+#
+# Watches every namespace for Kafka resources. kafka.yaml deploys a one-node
+# Kafka cluster in KRaft mode and a topic.
+#
+# Apply: astroctl app apply -f strimzi.yaml
+# Chart values: https://github.com/strimzi/strimzi-kafka-operator/tree/0.43.0/packaging/helm-charts/helm3/strimzi-kafka-operator
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: strimzi-kafka-operator
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: strimzi-kafka
+  source:
+    type: Helm
+    helm:
+      repo:
+        repoURL: oci://quay.io/strimzi-helm
+        chartName: strimzi-kafka-operator
+        chartVersion: 0.43.0
+      values:
+        object:
+          watchAnyNamespace: true

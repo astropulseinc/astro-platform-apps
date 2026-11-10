@@ -1,0 +1,20 @@
+# ClickHouse operator (Altinity), from its Helm chart
+#
+# Installs the operator that runs ClickHouse clusters you declare as
+# ClickHouseInstallation resources. clickhouse.yaml deploys one.
+#
+# Apply: astroctl app apply -f clickhouse-operator.yaml
+# Chart values: https://github.com/Altinity/clickhouse-operator/tree/master/deploy/helm/clickhouse-operator
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: clickhouse-operator
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: clickhouse
+  source:
+    type: Helm
+    helm:
+      repo:
+        repoURL: https://helm.altinity.com
+        chartName: altinity-clickhouse-operator
+        chartVersion: 0.27.4

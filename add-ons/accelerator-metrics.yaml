@@ -1,0 +1,14 @@
+# Accelerator Metrics (NVIDIA DCGM): GPU utilization, memory, power and
+# faults per application. Takes no settings of its own; it measures the NVIDIA
+# GPU nodes the cluster has.
+#
+# Apply: astroctl infra k8s addons apply -f accelerator-metrics.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: accelerator-metrics
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  options:
+    waitForReady: true
+    timeout: 10m

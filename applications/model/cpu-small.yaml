@@ -1,0 +1,26 @@
+# A small Hugging Face model on CPU
+#
+# Qwen2.5 0.5B Instruct needs no GPU, so it runs on any cluster with
+# 2 CPUs and 8 GiB of memory free. It answers on an OpenAI-compatible API
+# inside the cluster.
+#
+# Before you apply: a profile (profiles/) and the cert-manager and
+# model-serving add-ons (add-ons/).
+#
+# Apply:  astroctl app apply -f cpu-small.yaml --dry-run, then without --dry-run
+# Check:  astroctl app get qwen-small
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-small
+  profileName: <YOUR_PROFILE_NAME>
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen2.5-0.5B-Instruct
+      resources:
+        cpu: "2"
+        memory: 8Gi
+      scaling:
+        minReplicas: 1
+        maxReplicas: 1

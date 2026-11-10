@@ -1,0 +1,18 @@
+# 1. Certificates. On an EKS cluster AstroPulse created, cert-manager uses the
+#    cluster's own role to answer DNS-01 challenges in your Route 53 zone.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cert-manager
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    certManager:
+      issuerType: LetsEncryptStaging   # switch to LetsEncrypt once the endpoint works
+      email: platform@example.com
+      dnsSolver:
+        provider: aws
+        hostedZoneId: <YOUR_HOSTED_ZONE_ID>
+  options:
+    waitForReady: true
+    timeout: 15m

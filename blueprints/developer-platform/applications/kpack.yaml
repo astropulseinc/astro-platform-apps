@@ -1,0 +1,17 @@
+# kpack, from its unmodified v0.18.0 release manifest in resources/kpack-release.
+# Reads the release from this repository, so it needs no copy of its own.
+#
+# Apply: astroctl app apply -f kpack.yaml
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: kpack
+  profileName: platform
+  namespace: kpack
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: blueprints/developer-platform/resources/kpack-release

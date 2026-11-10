@@ -1,0 +1,32 @@
+# Certificates (cert-manager) with DNS-01 on Route 53.
+#
+# Let's Encrypt checks domain ownership through a TXT record in your DNS zone,
+# so certificates work for model endpoints on the gateway and for wildcard
+# certificates. cert-manager runs as an IAM role that may change records in
+# the zone.
+#
+# On an EKS cluster AstroPulse created, `identity` and `dnsSolver` default to
+# the cluster's own cert-manager role and Route 53 zones: leave both out.
+# On GKE set `provider: gcp`, `project` and `identity.gcpServiceAccount`;
+# on AKS set `provider: azure`, `resourceGroup`, `subscriptionId` and
+# `identity.azureClientId`.
+#
+# Apply: astroctl infra k8s addons apply -f cert-manager-letsencrypt-dns.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cert-manager
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    certManager:
+      issuerType: LetsEncrypt
+      email: platform@example.com
+      identity:
+        awsRoleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<YOUR_CERT_MANAGER_ROLE>
+      dnsSolver:
+        provider: aws
+        hostedZoneId: <YOUR_HOSTED_ZONE_ID>   # optional: found by name when left out
+  options:
+    waitForReady: true
+    timeout: 10m

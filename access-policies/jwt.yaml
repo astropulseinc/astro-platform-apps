@@ -1,0 +1,22 @@
+# Access policy: JWTs from your identity provider
+#
+# A caller is admitted when its token is signed by the issuer, names one of the
+# audiences and carries every required claim. The signing keys are found
+# through the issuer's discovery document unless you set jwksUri.
+#
+# Apply:     astroctl access-policy apply -f jwt.yaml --dry-run, then without --dry-run
+# Attach it: externalAccess.accessPolicyRef.name: company-callers on a model
+#            (applications/model/jwt-endpoint.yaml)
+apiVersion: platform.astropulse.io/v1
+kind: AccessPolicy
+metadata:
+  name: company-callers
+spec:
+  jwt:
+    issuer: https://identity.example.com   # exactly as the token's iss claim
+    audiences: [inference]                 # the token names any of these
+    require:                               # optional; every rule must pass
+      - claim: org
+        values: [example]
+      - claim: scope                       # scope is read as a list of scopes
+        values: [models:invoke]

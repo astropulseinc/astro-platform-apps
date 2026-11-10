@@ -1,0 +1,38 @@
+# Self-hosted Kubernetes on AWS (EC2 instances AstroPulse manages)
+#
+# Before you apply, set up the account once; the setup prints the bucket name:
+#   astroctl cloud aws selfHosted setup --account-id <YOUR_AWS_ACCOUNT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
+#   astroctl cloud aws selfHosted status --cluster-name <YOUR_CLUSTER_NAME>   # check the setup
+#
+# Apply: astroctl infra k8s apply -f new-vpc.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/self-hosted/aws
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: aws
+  region: <YOUR_REGION>
+  provisioner:
+    type: selfHosted
+    selfHosted:
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
+      bucketName: "<YOUR_BUCKET_NAME>"   # printed by the setup command
+      # networkId: <YOUR_VPC_ID>         # optional: an existing VPC instead of a new one
+      credentials:
+        type: Vault
+  clusterSpec:
+    controlPlane:
+      nodeGroup:
+        name: control-plane
+        machineTypes:
+          - t3.medium
+    dataPlane:
+      nodeGroups:
+        - name: workers
+          minNode: 3
+          maxNode: 6
+          instanceType: OnDemand
+          machineTypes:
+            - t3.large
+          labels:
+            environment: production

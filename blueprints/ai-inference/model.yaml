@@ -1,0 +1,36 @@
+# qwen-chat: Qwen3 8B on NVIDIA L4 GPUs at https://qwen-chat.apps.example.com,
+# callable only with a token the access policy accepts. Replicas scale from 1
+# to 2 on the requests waiting for them.
+#
+# Before you apply: example.com verified under Integrations > Domains, a
+# Hugging Face connection for gated models (see README.md), and everything
+# else in this folder.
+#
+# Apply: astroctl app apply -f model.yaml --dry-run, then without --dry-run
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: qwen-chat
+  profileName: inference
+  source:
+    type: Model
+    model:
+      uri: hf://Qwen/Qwen3-8B
+      serving:
+        maxContextTokens: 8192
+      resources:
+        accelerator:
+          gpu:
+            model: l4
+            countPerReplica: 1
+      scaling:
+        minReplicas: 1
+        maxReplicas: 2
+        metric:
+          requestsWaiting:
+            target: "2"
+  externalAccess:
+    hostname: qwen-chat.apps.example.com
+    exposure: Public
+    accessPolicyRef:
+      name: qwen-callers

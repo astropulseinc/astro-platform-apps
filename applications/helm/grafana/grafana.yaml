@@ -1,0 +1,30 @@
+# Grafana, from its Helm chart
+#
+# The chart generates the admin password into a Secret in the `monitoring`
+# namespace; README.md shows how to read it.
+#
+# The volume uses the cluster's default StorageClass; set
+# persistence.storageClassName if the cluster has none.
+#
+# Apply: astroctl app apply -f grafana.yaml
+# Chart values: https://github.com/grafana-community/helm-charts/tree/main/charts/grafana
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: grafana
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: monitoring
+  source:
+    type: Helm
+    helm:
+      repo:
+        repoURL: https://grafana-community.github.io/helm-charts
+        chartName: grafana
+        chartVersion: 14.4.0
+      values:
+        object:
+          persistence:
+            enabled: true
+            size: 10Gi
+          plugins:
+            - grafana-clickhouse-datasource

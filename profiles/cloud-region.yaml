@@ -1,0 +1,13 @@
+# Application profile: a cloud and region
+#
+# Applications that use this profile deploy to a cluster AstroPulse picks in
+# this cloud and region.
+#
+# Apply: astroctl app profile apply -f cloud-region.yaml
+apiVersion: platform.astropulse.io/v1
+kind: ApplicationProfile
+spec:
+  profileName: <YOUR_PROFILE_NAME>
+  cloudProvider:
+    provider: aws          # aws, gcp or azure
+    region: <YOUR_REGION>

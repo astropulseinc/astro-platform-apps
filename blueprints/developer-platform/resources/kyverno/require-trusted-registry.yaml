@@ -1,0 +1,25 @@
+# Audit reports violations without blocking. Switch validationActions to [Deny] once the reports are clean.
+# List the namespaces your services run in.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-trusted-registry
+spec:
+  validationActions: [Audit]
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: [latency-app]
+  validations:
+    - expression: "object.spec.containers.all(c, c.image.startsWith('ghcr.io/<YOUR_GITHUB_ORG>/'))"
+      message: "Images must come from ghcr.io/<YOUR_GITHUB_ORG>/"

@@ -1,0 +1,10 @@
+# 7. Accelerator Metrics: GPU utilization, memory and power per model.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: accelerator-metrics
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  options:
+    waitForReady: true
+    timeout: 15m

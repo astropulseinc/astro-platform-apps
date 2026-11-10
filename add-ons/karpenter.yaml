@@ -1,0 +1,35 @@
+# Node Autoscaling (karpenter): adds and removes nodes as demand changes.
+# AWS only (EKS and self-hosted). Installs into `kube-system`.
+#
+# On an EKS cluster AstroPulse created, the controller role and the
+# interruption queue come with the cluster: leave `aws` out. On a registered
+# EKS cluster, run `astroctl cloud aws generate-karpenter`, deploy the stack it
+# writes, then set `aws.iamRoleArn` to the controller role it outputs and
+# `interruptionQueue: true`.
+#
+# Apply: astroctl infra k8s addons apply -f karpenter.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: karpenter
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    karpenter:
+      cpuCapacityTypes: [OnDemand, Spot]
+      cpuLimit: 100          # most vCPU the default node pool runs at once
+      memoryLimit: 400Gi
+      disruption:
+        consolidationPolicy: WhenEmptyOrUnderutilized
+        consolidateAfter: 5m
+      # Registered EKS clusters only:
+      # interruptionQueue: true
+      # aws:
+      #   iamRoleArn: arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<YOUR_KARPENTER_CONTROLLER_ROLE>
+      #   subnetTags:
+      #     - karpenter.sh/discovery=<YOUR_CLUSTER_NAME>
+      #   securityGroupTags:
+      #     - karpenter.sh/discovery=<YOUR_CLUSTER_NAME>
+  options:
+    waitForReady: true
+    timeout: 15m

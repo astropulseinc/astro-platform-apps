@@ -1,0 +1,24 @@
+# Certificates (cert-manager): issues and renews TLS certificates.
+#
+# With `email` set, AstroPulse creates two Let's Encrypt ClusterIssuers,
+# production and staging, that check domain ownership over HTTP-01 through
+# the Ingress. For a wildcard certificate or model endpoints on the gateway,
+# use cert-manager-letsencrypt-dns.yaml instead. For internal or test
+# clusters, set `issuerType: SelfSigned` and drop `email`.
+#
+# Required by: model-serving, gateway.
+#
+# Apply: astroctl infra k8s addons apply -f cert-manager.yaml
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cert-manager
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  configuration:
+    certManager:
+      issuerType: LetsEncrypt      # LetsEncrypt, LetsEncryptStaging or SelfSigned
+      email: platform@example.com  # Let's Encrypt account and expiry notices
+  options:
+    waitForReady: true
+    timeout: 10m

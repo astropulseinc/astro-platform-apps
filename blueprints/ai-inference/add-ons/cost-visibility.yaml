@@ -1,0 +1,10 @@
+# 5. Cost Visibility: cost per model; its Prometheus also feeds Workload Autoscaling.
+apiVersion: platform.astropulse.io/v1
+kind: K8sClusterAddon
+metadata:
+  name: cost-visibility
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  options:
+    waitForReady: true
+    timeout: 15m

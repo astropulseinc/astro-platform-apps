@@ -1,0 +1,55 @@
+# EKS cluster in an existing VPC
+#
+# Before you apply:
+#   1. A VPC with a public and a private subnet in at least two availability
+#      zones. `astroctl cloud aws generate-vpc` writes a CloudFormation template
+#      for one.
+#   2. Connect the account:
+#        astroctl cloud aws connect --account-id <YOUR_AWS_ACCOUNT_ID> --cluster-name <YOUR_CLUSTER_NAME> --region <YOUR_REGION>
+#
+# Apply: astroctl infra k8s apply -f existing-vpc.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/managed/eks
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: aws
+  region: <YOUR_REGION>
+  provisioner:
+    type: eks
+    eks:
+      accountId: "<YOUR_AWS_ACCOUNT_ID>"
+      vpcId: "<YOUR_VPC_ID>"           # such as vpc-0abc1234def56789a
+      vpcCIDR: "10.0.0.0/16"           # the VPC's CIDR block
+      # One entry per availability zone in the region (such as us-east-2a),
+      # each with one public and one private subnet. Add or remove zones to
+      # match your region.
+      subnets:
+        <YOUR_ZONE_A>:
+          - type: Public
+            id: "<YOUR_PUBLIC_SUBNET_A>"    # such as subnet-0abc1234def56789a
+          - type: Private
+            id: "<YOUR_PRIVATE_SUBNET_A>"
+        <YOUR_ZONE_B>:
+          - type: Public
+            id: "<YOUR_PUBLIC_SUBNET_B>"
+          - type: Private
+            id: "<YOUR_PRIVATE_SUBNET_B>"
+        <YOUR_ZONE_C>:
+          - type: Public
+            id: "<YOUR_PUBLIC_SUBNET_C>"
+          - type: Private
+            id: "<YOUR_PRIVATE_SUBNET_C>"
+      credentials:
+        type: Dynamic
+  clusterSpec:
+    dataPlane:
+      nodeGroups:
+        - name: default-pool
+          minNode: 1
+          maxNode: 3
+          instanceType: OnDemand
+          machineTypes:
+            - t3.medium
+          labels:
+            environment: production

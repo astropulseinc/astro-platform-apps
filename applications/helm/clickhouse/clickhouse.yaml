@@ -1,0 +1,18 @@
+# A one-node ClickHouse cluster, from the manifests in resources/
+#
+# Before you apply: clickhouse-operator.yaml.
+#
+# Apply: astroctl app apply -f clickhouse.yaml
+apiVersion: platform.astropulse.io/v1
+kind: Application
+spec:
+  name: clickhouse
+  profileName: <YOUR_PROFILE_NAME>
+  namespace: clickhouse
+  source:
+    type: YAML
+    yaml:
+      repo:
+        repoURL: https://github.com/astropulseinc/astro-platform-apps.git
+        targetRevision: main
+        path: applications/helm/clickhouse/resources

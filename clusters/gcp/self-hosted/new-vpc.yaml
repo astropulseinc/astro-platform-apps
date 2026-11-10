@@ -1,0 +1,38 @@
+# Self-hosted Kubernetes on Google Cloud (Compute Engine instances AstroPulse manages)
+#
+# Before you apply, set up the project once; the setup prints the bucket name:
+#   astroctl cloud gcp selfHosted setup --project-id <YOUR_GCP_PROJECT_ID> --region <YOUR_REGION> --cluster-name <YOUR_CLUSTER_NAME>
+#   astroctl cloud gcp selfHosted status --cluster-name <YOUR_CLUSTER_NAME>   # check the setup
+#
+# Apply: astroctl infra k8s apply -f new-vpc.yaml --dry-run, then without --dry-run
+# Docs:  https://astropulse.io/docs/latest/platform/cluster-pipeline/features/provisioner/self-hosted/gcp
+apiVersion: platform.astropulse.io/v1
+kind: K8sCluster
+spec:
+  clusterName: <YOUR_CLUSTER_NAME>
+  provider: gcp
+  region: <YOUR_REGION>
+  provisioner:
+    type: selfHosted
+    selfHosted:
+      accountId: "<YOUR_GCP_PROJECT_ID>"
+      bucketName: "<YOUR_BUCKET_NAME>"   # printed by the setup command
+      # networkId: <YOUR_VPC_ID>         # optional: an existing VPC network instead of a new one
+      credentials:
+        type: Vault
+  clusterSpec:
+    controlPlane:
+      nodeGroup:
+        name: control-plane
+        machineTypes:
+          - e2-medium
+    dataPlane:
+      nodeGroups:
+        - name: workers
+          minNode: 3
+          maxNode: 6
+          instanceType: Spot
+          machineTypes:
+            - e2-medium
+          labels:
+            environment: production
